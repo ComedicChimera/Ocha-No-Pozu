@@ -1,3 +1,6 @@
+from render.sprite import rm
+
+
 class Force:
     def __init__(self):
         self.x_mag, self.y_mag = 0, 0
@@ -13,21 +16,37 @@ class Force:
     def apply(self, position):
         position.x += self.x_mag
         position.y += self.y_mag
+        return position
 
 
 class Entity:
-    def __init__(self, position, speed, force):
+    def __init__(self, position, speed, sprite):
         self.position = position
         self.speed = speed
-        self.force = force
+        self.force = Force()
+        self._sprite = sprite
 
     def update(self, collisions):
         pass
 
+    def transform(self, **kwargs):
+        for k, v in kwargs.items():
+            if k == 'x':
+                self.position += v * self.speed
+            elif k == 'y':
+                self.position += v * self.speed
+
+    def sprite(self, value=None):
+        if value:
+            rm.unload(self._sprite.path)
+            self._sprite = value
+        else:
+            return self._sprite.get_image()
+
 
 class GravityEntity(Entity):
-    def __init__(self, position, speed, force, gravity):
-        super().__init__(position, speed, force)
+    def __init__(self, position, speed, gravity, sprite):
+        super().__init__(position, speed, sprite)
         self.gravity = gravity
 
     def update(self, collisions):
@@ -44,5 +63,3 @@ class GravityEntity(Entity):
 
             self.force.y_mul += 1
 
-
-entities = []

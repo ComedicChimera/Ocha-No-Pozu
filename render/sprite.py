@@ -24,8 +24,8 @@ rm = ResourceManager()
 
 class Sprite:
     def __init__(self, path, dimensions):
-        self.path = path
-        self._image = rm.load(path)
+        self.path = 'sprites/' + path
+        self._image = rm.load(self.path)
         self.dimensions = dimensions
 
     def get_image(self):
@@ -39,7 +39,7 @@ class AnimatedSprite(Sprite):
     def __init__(self, path, dimensions, frames):
         super().__init__(path, dimensions)
         self._image = Image.open(self._image)
-        self.animation_counter, self.frames = 0,frames
+        self.animation_counter, self.frames = 0, frames
 
     def get_image(self):
         x = self.animation_counter * self.dimensions.x
