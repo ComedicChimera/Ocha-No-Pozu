@@ -17,6 +17,8 @@ class ResourceManager:
     def unload(self, path):
         if path in self.loaded and self.loaded[path][1] == 1:
             self.loaded.pop(path)
+        else:
+            self.loaded[path][1] -= 1
 
 
 rm = ResourceManager()
