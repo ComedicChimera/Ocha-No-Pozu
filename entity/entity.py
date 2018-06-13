@@ -14,7 +14,7 @@ class Entity:
 
         # sprite controls
         self.rotation = 0
-        self.flip_horizontal, self.flip_vertical = False
+        self.flip_horizontal, self.flip_vertical = False, False
 
     def update(self):
         pass

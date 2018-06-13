@@ -36,6 +36,11 @@ class GameState:
             others = self.tile_map + [x for x in self.entities if x != entity]
             entity.x_range, entity.y_range = calculate_x_range(entity, others), calculate_y_range(entity, others)
             entity.update()
+
+            # add animation
+            if hasattr(entity, 'animate'):
+                entity.animate()
+
             screen = draw.draw_sprite(screen, entity)
 
         for tile in self.tile_map:
