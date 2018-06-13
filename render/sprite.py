@@ -27,6 +27,8 @@ class Sprite:
         self.path = 'sprites/' + path
         self._image = rm.load(self.path)
         self.dimensions = dimensions
+        self.rotation = 0
+        self.flip_horizontal, self.flip_vertical = False
 
     def get_image(self):
         return self._image
