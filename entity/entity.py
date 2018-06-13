@@ -20,10 +20,11 @@ class Force:
 
 
 class Entity:
-    def __init__(self, position, speed, sprite):
+    def __init__(self, position, speed, collidable, sprite):
         self.position = position
         self.speed = speed
         self.force = Force()
+        self.collidable = collidable
         self._sprite = sprite
 
     def update(self, collisions):
@@ -48,23 +49,26 @@ class Entity:
 
 
 class GravityEntity(Entity):
-    def __init__(self, position, speed, gravity, sprite):
-        super().__init__(position, speed, sprite)
+    def __init__(self, position, speed, collidable, gravity, sprite):
+        super().__init__(position, speed, collidable, sprite)
         self.gravity = gravity
+        self.y_base = 0
 
     def update(self, collisions):
-        for collision in collisions:
-            if collision.position.y <= self.position.y and self.force.y_mag <= 0:
-                self.force.reset_multiplier()
-                self.force.y_mag = 0
-                break
-        # instantly fall
-        else:
-            self.force.effect(0, -self.gravity)
-
         if self.force.y_mag != 0:
             self.position = self.force.apply(self.position)
             self.force.effect(0, -self.gravity)
 
             self.force.y_mul += 1
+        elif self.position.y > self.y_base:
+            self.force.effect(0, -self.gravity)
+
+        if self.position.y < self.y_base:
+            self.force.reset_multiplier()
+            self.force.y_mag = 0
+            self.position.y = self.y_base
+
+
+
+
 

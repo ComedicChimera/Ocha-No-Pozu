@@ -4,3 +4,9 @@ class Tile:
         self.sprite_x, self.sprite_y = sprite_x, sprite_y
         self.repeat_x, self.repeat_y = repeat_x, repeat_y
         self.collidable = collidable
+
+
+class TileSet:
+    DIRT = (0, 0)
+    GRASS = (0, 1)
+
