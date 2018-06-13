@@ -12,6 +12,10 @@ class Entity:
         self._sprite = sprite
         self.x_range, self.y_range = Range(WIDTH), Range(HEIGHT)
 
+        # sprite controls
+        self.rotation = 0
+        self.flip_horizontal, self.flip_vertical = False
+
     def update(self):
         pass
 
