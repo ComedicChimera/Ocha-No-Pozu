@@ -3,7 +3,7 @@ import pygame
 from entity.player import Player
 import render.draw as draw
 import map.generate as generate
-from entity.collision import calculate_collisions, calculate_y_base
+from entity.collision import calculate_x_range, calculate_y_range
 
 
 class GameState:
@@ -13,8 +13,8 @@ class GameState:
 
     def __init__(self):
         self.state = self.States.MAIN
-        self.entities = []
         self.player = Player()
+        self.entities = [self.player]
         self.key_maps = {
             pygame.K_a: self.player.move_left,
             pygame.K_d: self.player.move_right,
@@ -32,12 +32,14 @@ class GameState:
             if keys[key]:
                 fn()
 
-        for entity in [self.player] + self.entities:
+        for entity in self.entities:
             others = self.tile_map + [x for x in self.entities if x != entity]
-            if hasattr(entity, 'y_base'):
-                entity.y_base = calculate_y_base(entity, others)
-            entity.update(calculate_collisions(entity, others))
+            entity.x_range, entity.y_range = calculate_x_range(entity, others), calculate_y_range(entity, others)
+            entity.update()
             screen = draw.draw_sprite(screen, entity)
+
+        for tile in self.tile_map:
+            screen = draw.draw_tile(screen, tile)
 
         return screen
 

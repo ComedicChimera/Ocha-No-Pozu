@@ -41,11 +41,11 @@ class AnimatedSprite(Sprite):
         self.animation_counter, self.frames = 0, frames
 
     def get_image(self):
-        x = self.animation_counter * self.dimensions.x
+        x = int(self.animation_counter) * self.dimensions.x
         cropped_image = pygame.Surface((self.dimensions.x, self.dimensions.y))
         cropped_image.blit(self._image, (0, 0), (x, 0, x + self.dimensions.x, self.dimensions.y))
         if self.animation_counter < self.frames - 1:
-            self.animation_counter += 1
+            self.animation_counter += 0.5
         else:
             self.animation_counter = 0
         return cropped_image

@@ -1,13 +1,6 @@
 from entity.entity import Entity
-
-
-class BoundingBox:
-    def __init__(self, x, y, width, height):
-        self.left, self.bottom = x, y
-        self.right, self.top = x + width, y + height
-
-    def get_property_list(self):
-        return {self.left, self.bottom, self.right, self.top}
+from util import TILE_SIZE, WIDTH, HEIGHT
+from entity.physics import Range, BoundingBox
 
 
 def _create_bounding_box(game_object):
@@ -17,27 +10,34 @@ def _create_bounding_box(game_object):
         return BoundingBox(game_object.position.x, game_object.position.y, dimensions.x, dimensions.y)
     # generate tile
     else:
-        dimensions = (16 * game_object.repeat_x, 16 * game_object.repeat_y)
-        return BoundingBox(game_object.position.x * 16, game_object.position.y * 16, *dimensions)
+        dimensions = (TILE_SIZE * game_object.repeat_x, TILE_SIZE * game_object.repeat_y)
+        return BoundingBox(game_object.position.x, game_object.position.y, *dimensions)
 
 
-def _get_collidable_boxes(e):
-    return [_create_bounding_box(x) for x in e if x.collidable]
+def _get_collidable_boxes(obj_list, fn):
+    return [x for x in map(lambda e: _create_bounding_box(e), [e for e in obj_list if e.collidable]) if fn(x)]
 
 
-def calculate_collisions(entity, others):
-    collisions = []
-    entity_box = _create_bounding_box(entity)
-    for other in _get_collidable_boxes(others):
-        if any(ep == op for ep, op in zip(entity_box.get_property_list(), other.get_property_list())):
-            collisions.append(other)
-    return collisions
+def calculate_x_range(entity, others):
+    rng, entity_box = Range(WIDTH), _create_bounding_box(entity)
+
+    def fn(x): return x.bottom <= entity_box.bottom <= x.top or x.bottom <= entity_box.top <= x.top
+    for other in _get_collidable_boxes(others, fn):
+        if entity_box.left >= other.right > rng.min:
+            rng.min = other.right
+        elif entity_box.right <= other.left < rng.max:
+            rng.max = other.left
+    return rng
 
 
-def calculate_y_base(entity, others):
-    y_base = 0
-    entity_box = _create_bounding_box(entity)
-    for other in _get_collidable_boxes(others):
-        if entity_box.bottom >= other.top > y_base and other.left <= entity_box.left and other.right >= entity_box.right:
-            y_base = other.top
-    return y_base
+def calculate_y_range(entity, others):
+    rng, entity_box = Range(HEIGHT), _create_bounding_box(entity)
+
+    def fn(x): return x.left <= entity_box.left <= x.right or x.left <= entity_box.right <= x.right
+
+    for other in _get_collidable_boxes(others, fn):
+        if entity_box.bottom >= other.top > rng.min:
+            rng.min = other.top
+        elif entity_box.top <= other.bottom < rng.max:
+            rng.max = other.bottom
+    return rng

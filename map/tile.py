@@ -7,6 +7,6 @@ class Tile:
 
 
 class TileSet:
-    DIRT = (0, 0)
+    DIRT = (11, 0)
     GRASS = (0, 1)
 

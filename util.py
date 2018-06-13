@@ -1,6 +1,8 @@
 WIDTH = 640
 HEIGHT = 480
 
+TILE_SIZE = 32
+
 
 class Point2D:
     def __init__(self, x, y):
