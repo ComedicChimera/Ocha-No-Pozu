@@ -16,7 +16,9 @@ while True:
     if pygame.QUIT in [e.type for e in events]:
         pygame.quit()
         break
-    game_state.update(events)
+    screen.fill((0, 0, 0))
+    screen = game_state.update(screen, events)
+    pygame.display.update()
     clock.tick_busy_loop(30)
 
 

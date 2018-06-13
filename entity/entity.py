@@ -32,9 +32,9 @@ class Entity:
     def transform(self, **kwargs):
         for k, v in kwargs.items():
             if k == 'x':
-                self.position += v * self.speed
+                self.position.x += v * self.speed
             elif k == 'y':
-                self.position += v * self.speed
+                self.position.y += v * self.speed
 
     def sprite(self, value=None):
         if value:
@@ -42,6 +42,9 @@ class Entity:
             self._sprite = value
         else:
             return self._sprite.get_image()
+
+    def dimensions(self):
+        return self._sprite.dimensions
 
 
 class GravityEntity(Entity):
@@ -51,15 +54,17 @@ class GravityEntity(Entity):
 
     def update(self, collisions):
         for collision in collisions:
-            if collision.position.y < self.position.y:
+            if collision.position.y <= self.position.y and self.force.y_mag <= 0:
                 self.force.reset_multiplier()
                 self.force.y_mag = 0
                 break
+        # instantly fall
         else:
             self.force.effect(0, -self.gravity)
 
         if self.force.y_mag != 0:
             self.position = self.force.apply(self.position)
+            self.force.effect(0, -self.gravity)
 
             self.force.y_mul += 1
 

@@ -1,4 +1,3 @@
-from PIL import Image
 import pygame
 
 
@@ -8,8 +7,7 @@ class ResourceManager:
 
     def load(self, path):
         if path not in self.loaded:
-            with open('assets/' + path) as file:
-                self.loaded[path] = (file, 1)
+            self.loaded[path] = (pygame.image.load('assets/' + path), 1)
         else:
             self.loaded[path][1] += 1
         return self.loaded[path][0]
@@ -31,7 +29,7 @@ class Sprite:
         self.dimensions = dimensions
 
     def get_image(self):
-        return pygame.image.load(self._image)
+        return self._image
 
     def __del__(self):
         rm.unload(self.path)
@@ -40,14 +38,14 @@ class Sprite:
 class AnimatedSprite(Sprite):
     def __init__(self, path, dimensions, frames):
         super().__init__(path, dimensions)
-        self._image = Image.open(self._image)
         self.animation_counter, self.frames = 0, frames
 
     def get_image(self):
         x = self.animation_counter * self.dimensions.x
-        cropped_image = self._image.crop((x, 0, x + self.dimensions.x, self.dimensions.y))
-        if self.animation_counter < self.frames:
+        cropped_image = pygame.Surface((self.dimensions.x, self.dimensions.y))
+        cropped_image.blit(self._image, (0, 0), (x, 0, x + self.dimensions.x, self.dimensions.y))
+        if self.animation_counter < self.frames - 1:
             self.animation_counter += 1
         else:
             self.animation_counter = 0
-        return pygame.image.fromstring(cropped_image.to_bytes(), cropped_image.size, cropped_image.mode)
+        return cropped_image
