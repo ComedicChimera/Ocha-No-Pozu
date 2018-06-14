@@ -29,7 +29,7 @@ class Range:
 
     def set(self, val):
         self.min = val
-        self.max = val
+        self.max = val + self.max
 
 
 class BoundingBox:

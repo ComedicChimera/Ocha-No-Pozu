@@ -5,15 +5,15 @@ import pygame
 tile_sheet = pygame.image.load('assets/tile_sheet.png')
 
 
-def draw_sprite(screen, entity, offset):
-    sprite = entity.sprite().convert()
+def draw_entity(screen, entity, offset):
+    sprite = entity.sprite().convert_alpha()
 
     if entity.rotation != 0:
         sprite = pygame.transform.rotate(sprite, entity.rotation)
     if entity.flip_horizontal or entity.flip_vertical:
         sprite = pygame.transform.flip(sprite, entity.flip_horizontal, entity.flip_vertical)
 
-    screen.blit(sprite.convert(), (entity.position.x + offset[0], HEIGHT - entity.position.y - entity.dimensions().y + offset[1]))
+    screen.blit(sprite, (entity.position.x + offset[0], HEIGHT - entity.position.y - entity.dimensions().y + offset[1]))
     return screen
 
 

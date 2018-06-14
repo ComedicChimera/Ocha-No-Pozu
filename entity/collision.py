@@ -1,5 +1,5 @@
 from entity.entity import Entity
-from util import TILE_SIZE, WIDTH, HEIGHT
+from util import TILE_SIZE, MAP_SIZE_X, MAP_SIZE_Y
 from entity.physics import Range, BoundingBox
 
 
@@ -19,9 +19,9 @@ def _get_collidable_boxes(obj_list, fn):
 
 
 def calculate_x_range(entity, others):
-    rng, entity_box = Range(WIDTH), _create_bounding_box(entity)
+    rng, entity_box = Range(MAP_SIZE_X), _create_bounding_box(entity)
 
-    def fn(x): return x.bottom <= entity_box.bottom <= x.top or x.bottom <= entity_box.top <= x.top
+    def fn(x): return x.bottom <= entity_box.bottom < x.top or x.bottom < entity_box.top <= x.top
     for other in _get_collidable_boxes(others, fn):
         if entity_box.left >= other.right > rng.min:
             rng.min = other.right
@@ -31,9 +31,9 @@ def calculate_x_range(entity, others):
 
 
 def calculate_y_range(entity, others):
-    rng, entity_box = Range(HEIGHT), _create_bounding_box(entity)
+    rng, entity_box = Range(MAP_SIZE_Y), _create_bounding_box(entity)
 
-    def fn(x): return x.left <= entity_box.left <= x.right or x.left <= entity_box.right <= x.right
+    def fn(x): return x.left <= entity_box.left < x.right or x.left < entity_box.right < x.right
 
     for other in _get_collidable_boxes(others, fn):
         if entity_box.bottom >= other.top > rng.min:

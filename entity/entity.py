@@ -1,6 +1,6 @@
 from render.sprite import rm
 from entity.physics import Range, Force
-from util import WIDTH, HEIGHT
+from util import MAP_SIZE_X, MAP_SIZE_Y
 
 
 class Entity:
@@ -10,7 +10,7 @@ class Entity:
         self.force = Force()
         self.collidable = collidable
         self._sprite = sprite
-        self.x_range, self.y_range = Range(WIDTH), Range(HEIGHT)
+        self.x_range, self.y_range = Range(MAP_SIZE_X), Range(MAP_SIZE_Y)
 
         # sprite controls
         self.rotation = 0
@@ -40,6 +40,9 @@ class Entity:
 
     def dimensions(self):
         return self._sprite.dimensions
+
+    def __del__(self):
+        rm.unload(self._sprite.path)
 
 
 class GravityEntity(Entity):

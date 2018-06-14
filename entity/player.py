@@ -1,5 +1,5 @@
 from entity.entity import GravityEntity
-from util import Point2D, WIDTH, HEIGHT
+from util import Point2D, WIDTH, PLAYER_SPAWN
 from render.sprite import AnimatedSprite
 from enum import Enum
 
@@ -10,12 +10,12 @@ class Player(GravityEntity):
         RUNNING = 1
 
     def __init__(self):
-        super().__init__(Point2D(WIDTH / 2, HEIGHT / 2), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(32, 44), 3, speed=0.25))
+        super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 192), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(32, 44), 3, speed=0.25))
         self.animation_state = self.PlayerStates.IDLE
 
     def jump(self):
         if self.force.y_mag == 0:
-            self.force.effect(self.force.x_mag, 30)
+            self.force.effect(self.force.x_mag, 10)
 
     def move_left(self):
         self.transform(x=-1)
