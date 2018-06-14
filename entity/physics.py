@@ -27,6 +27,10 @@ class Range:
     def __contains__(self, item):
         return self.min <= item <= self.max
 
+    def set(self, val):
+        self.min = val
+        self.max = val
+
 
 class BoundingBox:
     def __init__(self, x, y, width, height):
