@@ -37,5 +37,3 @@ class Player(GravityEntity):
             self.animation_state = self.PlayerStates.IDLE
         elif self._sprite.path != 'sprites/player_idle.png':
             self._sprite = AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25)
-
-1
