@@ -1,54 +1,71 @@
-# imports
-
 import pygame
-from pygame import mixer
-
-import time
+from functools import partial
 
 
-# init(frequency, size, stereo, buffer)
-
-mixer.init(44100)
-
-
-# music function
-
-def music(file, volume=1, loop=1):
-
-    pygame.mixer.music.load(file)
-
-    pygame.mixer.music.set_volume(volume)
-
-    if loop:
-        pygame.mixer.music.play(-1)
-    else:
-        pygame.mixer.music.play()
+class Sound:
+    def __init__(self, sound, paused):
+        self.sound = sound
+        self.paused = paused
 
 
-# sound function
+class AudioManager:
+    def __init__(self):
+        pygame.mixer.init(44100)
+        self.pause = False
+        self.sounds = {}
 
-def sound(file, volume=1):
-    loaded_sound = pygame.mixer.Sound(file)
+    @staticmethod
+    def play_music(name, volume=1, loop=False):
+        if pygame.mixer.music.get_busy():
+            return
 
-    loaded_sound.set_volume(volume)
-    loaded_sound.play()
+        pygame.mixer.music.load(name)
+
+        pygame.mixer.music.set_volume(volume)
+
+        if loop:
+            pygame.mixer.music.play(-1)
+        else:
+            pygame.mixer.music.play()
+
+    def set_pause(self):
+        self.pause = not self.pause
+        if self.pause:
+            pygame.mixer.music.pause()
+        else:
+            pygame.mixer.music.unpause()
+
+    @staticmethod
+    def stop_music():
+        pygame.mixer.music.stop()
+
+    def play_sound(self, name, volume=1):
+        loaded_sound = pygame.mixer.Sound(name)
+
+        loaded_sound.set_volume(volume)
+        loaded_sound.play().set_endevent(partial(self._remove_sound, name))
+
+        self.sounds[name] = Sound(loaded_sound, False)
+
+    def stop_sound(self, name):
+        if name in self.sounds:
+            self.sounds[name].sound.stop()
+            self._remove_sound(name)
+
+    def _remove_sound(self, name):
+        # no check necessary; called internally
+        self.sounds.pop(name)
+
+    def set_sound_pause(self, name):
+        if name in self.sounds:
+            self.sounds[name].paused = not self.sounds[name].paused
+            if self.sounds[name].paused:
+                self.sounds[name].sound.unpause()
+            else:
+                self.sounds[name].sound.pause()
 
 
-# testing
-
-def run():
-    sound('Gun shot 1.ogg')
-
-    time.sleep(2)
-    music('wander.ogg', 0.5, True)
-
-    time.sleep(5)
-    sound('Gun shot 1.ogg')
-    sound('Gun shot 1.ogg')
 
 
-run()
-
-time.sleep(600)
 
 
