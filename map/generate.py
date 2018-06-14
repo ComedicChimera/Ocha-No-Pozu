@@ -11,7 +11,7 @@ def generate_easy_over_world():
         tile_map.append(Tile(i * -TILE_SIZE, PLAYER_SPAWN // TILE_SIZE, *TileSet.STONE, repeat_y=base_height))
         base_height += randint(2, 4)
     # generate normal over-world
-    top, bottom = 7, 2
+    top, bottom = 5, 2
     prev_height = 4
     for i in range(0, 40):
         height = randint(prev_height - 2 if prev_height - 2 > bottom else bottom, prev_height)
