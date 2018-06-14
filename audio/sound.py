@@ -3,8 +3,9 @@ from functools import partial
 
 
 class Sound:
-    def __init__(self, sound, paused):
+    def __init__(self, sound, channel, paused):
         self.sound = sound
+        self.channel = channel
         self.paused = paused
 
 
@@ -43,9 +44,10 @@ class AudioManager:
         loaded_sound = pygame.mixer.Sound(name)
 
         loaded_sound.set_volume(volume)
-        loaded_sound.play().set_endevent(partial(self._remove_sound, name))
+        chan = loaded_sound.play()
+        chan.set_endevent(partial(self._remove_sound, name))
 
-        self.sounds[name] = Sound(loaded_sound, False)
+        self.sounds[name] = Sound(loaded_sound, chan, False)
 
     def stop_sound(self, name):
         if name in self.sounds:
