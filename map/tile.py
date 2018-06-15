@@ -1,4 +1,5 @@
 from util import Point2D
+from render.sprite import rm
 
 
 class Tile:
@@ -6,6 +7,14 @@ class Tile:
         self.position = Point2D(x, y)
         self.sprite_x, self.sprite_y = sprite_x, sprite_y
         self.repeat_x, self.repeat_y = repeat_x, repeat_y
+        self.collidable = collidable
+
+
+class SpriteTile:
+    def __init__(self, path, x, y, width, height, collidable=False):
+        self.sprite = rm.load('sprites/' + path)
+        self.position = Point2D(x, y)
+        self.dimensions = Point2D(width, height)
         self.collidable = collidable
 
 

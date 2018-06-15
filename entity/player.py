@@ -13,7 +13,7 @@ class Player(GravityEntity):
         super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 192), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25))
         self.animation_state = self.PlayerStates.IDLE
         self.fading = False
-        self._can_fade = True
+        self.can_fade = True
 
     def jump(self):
         if self.force.y_mag == 0:
@@ -30,7 +30,7 @@ class Player(GravityEntity):
         self.animation_state = self.PlayerStates.RUNNING
 
     def fade(self):
-        if not self._can_fade:
+        if not self.can_fade:
             return
         self._speed_modifier = 10
         self.fading = True
@@ -42,19 +42,17 @@ class Player(GravityEntity):
         self.fading = False
         self.invulnerable = False
 
-        self._can_fade = False
+        self.can_fade = False
         self.set_timer(180, self._enable_fade)
 
     def _enable_fade(self):
-        self._can_fade = True
+        self.can_fade = True
 
     def animate(self):
         if self.force.y_mag != 0:
-            if self._sprite.path != 'sprites/player_midair.png':
-                self._sprite = Sprite('player_midair.png', Point2D(25, 44))
+            self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
         elif self.animation_state == self.PlayerStates.RUNNING:
-            if self._sprite.path != 'sprites/player_running.png':
-                self._sprite = AnimatedSprite('player_running.png', Point2D(25, 44), 7)
+            self._change_sprite(AnimatedSprite('player_running.png', Point2D(25, 44), 7))
             self.animation_state = self.PlayerStates.IDLE
-        elif self._sprite.path != 'sprites/player_idle.png':
-            self._sprite = AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25)
+        else:
+            self._change_sprite(AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25))

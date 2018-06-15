@@ -78,6 +78,12 @@ class Entity:
         self.force.reset_y()
         self.position.y = self.y_range.max - self._sprite.dimensions.y
 
+    def _change_sprite(self, sprite):
+        if self._sprite.path == sprite.path:
+            return
+        rm.unload(self._sprite.path)
+        self._sprite = sprite
+
     def __del__(self):
         rm.unload(self._sprite.path)
 
@@ -101,9 +107,6 @@ class GravityEntity(Entity):
     def _compute_top_collision(self):
         self.force.y_mag = -self.gravity
         self.position.y = self.y_range.max - self._sprite.dimensions.y
-
-
-
 
 
 

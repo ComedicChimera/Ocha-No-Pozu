@@ -1,5 +1,6 @@
 from entity.physics import Range
 from entity.entity import Entity
+from map.tile import SpriteTile
 from util import Point2D, TILE_SIZE
 import render.draw as draw
 from pygame import BLEND_RGBA_MULT
@@ -32,10 +33,15 @@ class Window:
                 objects.append(obj)
         return objects
 
+    def draw_gui_element(self, element):
+        self.blit(element.get_image(), (element.position.x, element.position.y))
+
     @staticmethod
     def _dimensions(obj):
         if isinstance(obj, Entity):
             return obj.dimensions()
+        elif isinstance(obj, SpriteTile):
+            return Point2D(obj.dimensions.x, obj.dimensions.y)
         else:
             return Point2D(TILE_SIZE * obj.repeat_x, TILE_SIZE * obj.repeat_y)
 

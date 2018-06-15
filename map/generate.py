@@ -1,4 +1,4 @@
-from map.tile import Tile, TileSet
+from map.tile import *
 from random import randint, choice
 from util import PLAYER_SPAWN, TILE_SIZE
 
@@ -14,6 +14,7 @@ def generate_easy_over_world():
     # generate normal over-world
     top, bottom = 6, 2
     prev_height = 4
+    spawned_tree = False
     for i in [x for x in range(0, 40) if x % 2 == 0]:
         height = prev_height + choice([-1, -1, 1, 1, 0])
         height = height if bottom <= height <= top else prev_height
@@ -22,6 +23,12 @@ def generate_easy_over_world():
         for _ in range(2):
             if randint(0, 1) == 0:
                 tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * height, *TileSet.GRASS_SURFACE, collidable=False))
+            elif randint(0, 4) == 0 and not spawned_tree:
+                tile_map.append(SpriteTile('tree.png', x_pos - 48,
+                                           (PLAYER_SPAWN + TILE_SIZE * height), 128, 128))
+                spawned_tree = True
+            else:
+                spawned_tree = False
             tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * (height - 1), *TileSet.GRASS))
             if height > 1:
                 tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * (height - 3), *TileSet.DIRT, repeat_y=2))

@@ -1,4 +1,5 @@
 from entity.entity import Entity
+from map.tile import SpriteTile
 from util import TILE_SIZE, MAP_SIZE_X, MAP_SIZE_Y
 from entity.physics import Range, BoundingBox
 
@@ -8,6 +9,9 @@ def _create_bounding_box(game_object):
     if isinstance(game_object, Entity):
         dimensions = game_object.dimensions()
         return BoundingBox(game_object.position.x, game_object.position.y, dimensions.x, dimensions.y)
+    # generate sprite tile
+    elif isinstance(game_object, SpriteTile):
+        return BoundingBox(game_object.position.x, game_object.position.y, game_object.dimensions.x, game_object.dimensions.y)
     # generate tile
     else:
         dimensions = (TILE_SIZE * game_object.repeat_x, TILE_SIZE * game_object.repeat_y)
