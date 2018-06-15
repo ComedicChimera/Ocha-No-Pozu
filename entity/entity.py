@@ -14,6 +14,7 @@ class Entity:
         self.timer_frames = 0
         self._timer_end_event = None
         self._speed_modifier = 0
+        self.invulnerable = False
 
         # sprite controls
         self.rotation = 0
@@ -24,6 +25,7 @@ class Entity:
             self.timer_frames -= 1
             if self.timer_frames == 0 and self._timer_end_event:
                 self._timer_end_event()
+        self._handle_collide()
 
     def transform(self, **kwargs):
         for k, v in kwargs.items():
@@ -51,6 +53,31 @@ class Entity:
         self.timer_frames = timer_frames
         self._timer_end_event = end_event
 
+    def _handle_collide(self):
+        # bottom collision
+        if self.position.y < self.y_range.min and self.force.y_mag <= 0:
+            self.force.reset_y()
+            self.position.y = self.y_range.min
+
+        # top collision
+        if self.position.y + self._sprite.dimensions.y > self.y_range.max and self.force.y_mag >= 0:
+            self._compute_top_collision()
+
+        # left collision
+        if self.position.x < self.x_range.min and self.force.x_mag <= 0:
+            self.force.reset_x()
+            self.position.x = self.x_range.min
+
+        # right collision
+        if self.position.x + self._sprite.dimensions.x > self.x_range.max and self.force.x_mag >= 0:
+            self.force.reset_x()
+            self.position.x = self.x_range.max - self._sprite.dimensions.x
+
+    # to allow gravity entity to overload the physics engine
+    def _compute_top_collision(self):
+        self.force.reset_y()
+        self.position.y = self.y_range.max - self._sprite.dimensions.y
+
     def __del__(self):
         rm.unload(self._sprite.path)
 
@@ -69,29 +96,13 @@ class GravityEntity(Entity):
         elif self.position.y > self.y_range.min:
             self.force.effect(0, -self.gravity)
 
-        self._handle_collide()
         super().update()
 
-    def _handle_collide(self):
-        # bottom collision
-        if self.position.y < self.y_range.min and self.force.y_mag <= 0:
-            self.force.reset_y()
-            self.position.y = self.y_range.min
+    def _compute_top_collision(self):
+        self.force.y_mag = -self.gravity
+        self.position.y = self.y_range.max - self._sprite.dimensions.y
 
-        # top collision
-        if self.position.y + self._sprite.dimensions.y > self.y_range.max and self.force.y_mag >= 0:
-            self.force.y_mag = -self.gravity
-            self.position.y = self.y_range.max - self._sprite.dimensions.y
 
-        # left collision
-        if self.position.x < self.x_range.min and self.force.x_mag <= 0:
-            self.force.reset_x()
-            self.position.x = self.x_range.min
-
-        # right collision
-        if self.position.x + self._sprite.dimensions.x > self.x_range.max and self.force.x_mag >= 0:
-            self.force.reset_x()
-            self.position.x = self.x_range.max - self._sprite.dimensions.x
 
 
 

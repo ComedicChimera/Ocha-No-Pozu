@@ -34,12 +34,13 @@ class Player(GravityEntity):
             return
         self._speed_modifier = 10
         self.fading = True
-
+        self.invulnerable = True
         self.set_timer(15, end_event=self._end_fade)
 
     def _end_fade(self):
         self._speed_modifier = 0
         self.fading = False
+        self.invulnerable = False
 
         self._can_fade = False
         self.set_timer(180, self._enable_fade)

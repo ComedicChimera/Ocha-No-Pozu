@@ -20,6 +20,8 @@ def generate_easy_over_world():
         prev_height = height
         x_pos = i * TILE_SIZE
         for _ in range(2):
+            if randint(0, 1) == 0:
+                tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * height, *TileSet.GRASS_SURFACE, collidable=False))
             tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * (height - 1), *TileSet.GRASS))
             if height > 1:
                 tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * (height - 3), *TileSet.DIRT, repeat_y=2))
