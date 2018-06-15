@@ -1,16 +1,20 @@
-from inspect import signature
 import states.main_state
+import pygame
 
 
 class GameState:
-    def __init__(self):
-        self.state = states.main_state.MainState()
+    def __init__(self, screen):
+        self._state = states.main_state.MainState(screen)
+        self.quit = False
 
-    def update(self, screen, events):
-        if len(signature(self.state.update).parameters) > 1:
-            return self.state.update(screen, events)
-        else:
-            return self.state.update(screen)
+    def update(self):
+        events = pygame.event.get()
+        if pygame.QUIT in [e.type for e in events]:
+            pygame.quit()
+            self.quit = True
+            return
+        self._state.window.clear((119, 171, 255))
+        self._state.update()
+        pygame.display.update()
+        return self._state.window.screen
 
-
-game_state = GameState()

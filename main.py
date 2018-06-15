@@ -1,6 +1,6 @@
 import pygame
 import util
-from state import game_state
+from state import GameState
 
 
 pygame.init()
@@ -10,15 +10,10 @@ pygame.display.set_caption('Final Game')
 
 
 clock = pygame.time.Clock()
+game_state = GameState(screen)
 
-while True:
-    events = pygame.event.get()
-    if pygame.QUIT in [e.type for e in events]:
-        pygame.quit()
-        break
-    screen.fill((119, 171, 255))
-    screen = game_state.update(screen, events)
-    pygame.display.update()
+while not game_state.quit:
+    screen = game_state.update()
     clock.tick_busy_loop(30)
 
 

@@ -1,10 +1,13 @@
 from entity.physics import Range
 from entity.entity import Entity
 from util import Point2D, TILE_SIZE
+import render.draw as draw
+from pygame import BLEND_RGBA_MULT
 
 
 class Window:
-    def __init__(self, width, height):
+    def __init__(self, screen, width, height):
+        self.screen = screen
         self.width = width
         self.height = height
         self.x_range, self.y_range = Range(self.width), Range(self.height)
@@ -16,7 +19,11 @@ class Window:
         self.offset[0] = x
         self.offset[1] = y
 
-    def crop_window(self, entities, tiles):
+    def shift_position(self, position):
+        position.x += self.offset[0]
+        position.y += self.offset[1]
+
+    def clip_objects(self, entities, tiles):
         objects = []
         for obj in entities + tiles:
             if obj.position.x in self.x_range or obj.position.x + self._dimensions(obj).x in self.x_range:
@@ -25,13 +32,29 @@ class Window:
                 objects.append(obj)
         return objects
 
-    def shift_position(self, position):
-        position.x += self.offset[0]
-        position.y += self.offset[1]
-
     @staticmethod
     def _dimensions(obj):
         if isinstance(obj, Entity):
             return obj.dimensions()
         else:
             return Point2D(TILE_SIZE * obj.repeat_x, TILE_SIZE * obj.repeat_y)
+
+    def draw_entity(self, entity):
+        self.screen = draw.draw_entity(self.screen, entity, self.offset)
+
+    def draw_tile(self, tile):
+        self.screen = draw.draw_tile(self.screen, tile, self.offset)
+
+    def blit(self, source, dest, area=None, special_flags=0):
+        self.screen.blit(source, dest, area, special_flags)
+
+    def draw_overlay(self, o, opacity=100):
+        if isinstance(o, tuple):
+            self.screen.fill((*o, opacity), None, BLEND_RGBA_MULT)
+        else:
+            image = o.convert_alpha()
+            image.fill((255, 255, 255, opacity), None, BLEND_RGBA_MULT)
+            self.blit(image, (0, 0))
+
+    def clear(self, color):
+        self.screen.fill(color)

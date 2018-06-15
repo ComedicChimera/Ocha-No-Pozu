@@ -11,17 +11,23 @@ class Entity:
         self.collidable = collidable
         self._sprite = sprite
         self.x_range, self.y_range = Range(MAP_SIZE_X), Range(MAP_SIZE_Y)
+        self.timer_frames = 0
+        self._timer_end_event = None
+        self._speed_modifier = 0
 
         # sprite controls
         self.rotation = 0
         self.flip_horizontal, self.flip_vertical = False, False
 
     def update(self):
-        pass
+        if self.timer_frames > 0:
+            self.timer_frames -= 1
+            if self.timer_frames == 0 and self._timer_end_event:
+                self._timer_end_event()
 
     def transform(self, **kwargs):
         for k, v in kwargs.items():
-            v *= self.speed
+            v *= self.speed + self._speed_modifier
             if k == 'x' and self.position.x + v in self.x_range:
                 if v > 0 and not self.position.x + self._sprite.dimensions.x + v in self.x_range:
                     return
@@ -40,6 +46,10 @@ class Entity:
 
     def dimensions(self):
         return self._sprite.dimensions
+
+    def set_timer(self, timer_frames, end_event=None):
+        self.timer_frames = timer_frames
+        self._timer_end_event = end_event
 
     def __del__(self):
         rm.unload(self._sprite.path)
