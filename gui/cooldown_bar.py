@@ -9,13 +9,9 @@ class CoolDownBar(GUIElement):
         self.cool_down = 0
         self.base_image = rm.load('sprites/cooldown_bar.png')
 
-    def update(self):
-        if self.cool_down > 0:
-            self.cool_down -= 1
-
     def get_image(self):
-        if self.cool_down > 0:
+        if self.cool_down < 90:
             image = copy(self.base_image)
-            image.fill((39, 255, 93), (36, 16, self.cool_down, 6))
+            image.fill((143, 39, 255), (36, 16, 90 - self.cool_down, 6))
             return image
         return self.base_image

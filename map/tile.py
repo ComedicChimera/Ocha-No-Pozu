@@ -28,4 +28,8 @@ class TileSet:
     SNOW = (6, 0)
     SNOW_GRASS = (7, 0)
     SNOW_STONE = (8, 0)
+    STALACTITE = (9, 0)
+    STALAGMITE = (10, 0)
+    SPIKES = (11, 0)
+    WATER = (12, 0)
 

@@ -1,4 +1,4 @@
-from util import HEIGHT, TILE_SIZE
+from util import HEIGHT, TILE_SIZE, WIDTH, PLAYER_SPAWN
 import pygame
 from map.tile import SpriteTile
 
@@ -26,7 +26,13 @@ def draw_tile(screen, tile, offset):
         tile_image = pygame.Surface((width, height), pygame.SRCALPHA)
         for x in range(tile.repeat_x):
             for y in range(tile.repeat_y):
-                tile_image.blit(tile_sheet, (x * TILE_SIZE, y * TILE_SIZE), (tile.sprite_x * TILE_SIZE, tile.sprite_y * TILE_SIZE,
-                                                                             TILE_SIZE, TILE_SIZE))
+                x_pos, y_pos = x * TILE_SIZE, y * TILE_SIZE
+                if -offset[0] - TILE_SIZE > x_pos + tile.position.x or x_pos + tile.position.x > -offset[0] + WIDTH:
+                    continue
+                elif offset[1] - PLAYER_SPAWN - TILE_SIZE > height - y_pos + tile.position.y:
+                    continue
+                elif height - y_pos + tile.position.y > offset[1] + HEIGHT + TILE_SIZE:
+                    continue
+                tile_image.blit(tile_sheet, (x_pos, y_pos), (tile.sprite_x * TILE_SIZE, tile.sprite_y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
         screen.blit(tile_image, (tile.position.x + offset[0], HEIGHT - tile.position.y - height + offset[1]))
     return screen

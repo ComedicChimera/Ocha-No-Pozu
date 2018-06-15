@@ -23,6 +23,7 @@ class MainState:
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cooldown_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
+        self._fade_vignette = pygame.image.load('assets/sprites/vignette.png')
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -54,9 +55,13 @@ class MainState:
                 self.window.draw_tile(obj)
 
         if self.player.fading:
-            self.window.draw_overlay((200, 200, 200), 20)
-        if not self.player.can_fade:
+            self.window.draw_overlay(self._fade_vignette)
+            self.window.draw_overlay((78, 0, 107), 10)
+            self._cooldown_bar.cool_down = (15 - self.player.timer_frames) * 6
+        elif not self.player.can_fade:
             self._cooldown_bar.cool_down = self.player.timer_frames / 2
+        elif self._cooldown_bar.cool_down != 0:
+            self._cooldown_bar.cool_down = 0
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
         self.window.draw_gui_element(self._cooldown_bar)
