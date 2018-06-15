@@ -70,6 +70,7 @@ class GravityEntity(Entity):
             self.force.effect(0, -self.gravity)
 
         self._handle_collide()
+        super().update()
 
     def _handle_collide(self):
         # bottom collision

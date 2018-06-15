@@ -39,6 +39,7 @@ class MainState:
             if isinstance(obj, Entity):
                 others = self.tile_map + [x for x in self.entities if x != obj]
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
+
                 obj.update()
 
                 # add animation
@@ -51,9 +52,10 @@ class MainState:
                 self.window.draw_tile(obj)
 
         if self.player.fading:
-            self.window.draw_overlay((200, 200, 200), 10)
+            self.window.draw_overlay((200, 200, 200), 20)
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
 
     def fade(self):
-        self.player.fade()
+        if not self.player.fading:
+            self.player.fade()

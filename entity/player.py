@@ -13,10 +13,11 @@ class Player(GravityEntity):
         super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 192), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25))
         self.animation_state = self.PlayerStates.IDLE
         self.fading = False
+        self._can_fade = True
 
     def jump(self):
         if self.force.y_mag == 0:
-            self.force.effect(self.force.x_mag, 10)
+            self.force.effect(self.force.x_mag, 10 + self._speed_modifier)
 
     def move_left(self):
         self.transform(x=-1)
@@ -29,14 +30,22 @@ class Player(GravityEntity):
         self.animation_state = self.PlayerStates.RUNNING
 
     def fade(self):
+        if not self._can_fade:
+            return
         self._speed_modifier = 10
         self.fading = True
 
-        self.set_timer(50, end_event=self._end_fade)
+        self.set_timer(15, end_event=self._end_fade)
 
     def _end_fade(self):
         self._speed_modifier = 0
         self.fading = False
+
+        self._can_fade = False
+        self.set_timer(180, self._enable_fade)
+
+    def _enable_fade(self):
+        self._can_fade = True
 
     def animate(self):
         if self.force.y_mag != 0:
