@@ -3,19 +3,21 @@ from render.sprite import rm
 
 
 class Tile:
-    def __init__(self, x, y, sprite_x, sprite_y, repeat_x=1, repeat_y=1, collidable=True):
+    def __init__(self, x, y, sprite_x, sprite_y, repeat_x=1, repeat_y=1, collidable=True, damage=0):
         self.position = Point2D(x, y)
         self.sprite_x, self.sprite_y = sprite_x, sprite_y
         self.repeat_x, self.repeat_y = repeat_x, repeat_y
         self.collidable = collidable
+        self.damage = damage
 
 
 class SpriteTile:
-    def __init__(self, path, x, y, width, height, collidable=False):
+    def __init__(self, path, x, y, width, height, collidable=False, damage=0):
         self.sprite = rm.load('sprites/' + path)
         self.position = Point2D(x, y)
         self.dimensions = Point2D(width, height)
         self.collidable = collidable
+        self.damage = 0
 
 
 class TileSet:

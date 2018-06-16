@@ -13,13 +13,13 @@ def generate_easy_over_world():
         tile_map.append(Tile(i * -TILE_SIZE, PLAYER_SPAWN // TILE_SIZE, *TileSet.STONE, repeat_y=base_height))
         base_height += randint(2, 4)
     # generate normal over-world
-    tile_map += _generate_over_world_flat(40, 7, 2)
-    tile_map += _generate_over_world_flat(40, 7, 2, 40, 7, tile_map[-1].position.y // TILE_SIZE)
+    tile_map += _generate_over_world(40, 7, 2)
+    tile_map += _generate_over_world(40, 7, 2, 40, 7, tile_map[-1].position.y // TILE_SIZE)
     return tile_map
 
 
 # generate standard over world map
-def _generate_over_world_flat(tiles, top, bottom, x_offset=0, gaps=0, start_height=None):
+def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=None):
     gap_locations = []
     if gaps > 0:
         gap_locations = [randint(x_offset, tiles + x_offset) for _ in range(gaps)]
@@ -31,7 +31,7 @@ def _generate_over_world_flat(tiles, top, bottom, x_offset=0, gaps=0, start_heig
     for i in [x for x in range(0, tiles) if x % 2 == 0]:
         x_pos = i * TILE_SIZE + x_offset * TILE_SIZE
         if x_pos in gap_locations and i < tiles - 2:
-            tile_map.append(Tile(x_pos, TILE_SIZE * 3, *TileSet.SPIKES, 2))
+            tile_map.append(Tile(x_pos, TILE_SIZE * 3, *TileSet.SPIKES, 2, collidable=False, damage=100))
             continue
         height = prev_height + choice([-1, -1, 1, 1, 0])
         height = height if bottom <= height <= top else prev_height

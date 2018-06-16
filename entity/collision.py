@@ -45,3 +45,8 @@ def calculate_y_range(entity, others):
         elif entity_box.top <= other.bottom < rng.max:
             rng.max = other.bottom
     return rng
+
+
+def colliding(entity, other):
+    box1, box2 = _create_bounding_box(entity), _create_bounding_box(other)
+    return box1 in box2

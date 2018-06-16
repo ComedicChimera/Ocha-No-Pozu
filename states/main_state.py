@@ -2,11 +2,13 @@ import pygame
 from entity.player import Player
 from render.sprite import AnimatedSprite
 import map.generate as generate
-from entity.collision import calculate_x_range, calculate_y_range
+from entity.collision import calculate_x_range, calculate_y_range, colliding
 from render.window import Window
 from util import WIDTH, HEIGHT, Point2D, PLAYER_SPAWN
 from entity.entity import Entity
 from gui.cooldown_bar import CoolDownBar
+from gui.death_text import DeathText
+from audio.sound import am
 
 
 class MainState:
@@ -24,6 +26,8 @@ class MainState:
         self._cooldown_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
         self._fade_vignette = pygame.image.load('assets/sprites/vignette.png')
+        self.player_alive = True
+        self.death_text = None
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -52,9 +56,19 @@ class MainState:
                 self.window.draw_entity(obj)
             # assume tile
             else:
+                if obj.damage > 0 and colliding(self.player, obj):
+                    self.player.hurt(obj.damage)
                 self.window.draw_tile(obj)
 
-        if self.player.fading:
+        if self.player.health == 0:
+            # am.play_sound('death.ogg')
+            self.window.draw_overlay(self._fade_vignette)
+            if not self.death_text:
+                self.death_text = DeathText()
+            self.window = self.death_text.update(self.window)
+            if self.death_text.animation_over:
+                self.player_alive = False
+        elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
             self.window.draw_overlay((78, 0, 107), 10)
             self._cooldown_bar.cool_down = (15 - self.player.timer_frames) * 6
@@ -65,6 +79,8 @@ class MainState:
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
         self.window.draw_gui_element(self._cooldown_bar)
+
+        return self.player_alive
 
     def fade(self):
         if not self.player.fading:

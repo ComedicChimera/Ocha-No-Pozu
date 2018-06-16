@@ -39,3 +39,8 @@ class BoundingBox:
 
     def get_property_list(self):
         return {self.left, self.bottom, self.right, self.top}
+
+    def __contains__(self, item):
+        colliding_x = self.left <= item.left <= self.right or self.left <= item.right <= self.right
+        colliding_y = self.bottom <= item.bottom <= self.top or self.bottom <= item.top <= self.top
+        return colliding_x and colliding_y

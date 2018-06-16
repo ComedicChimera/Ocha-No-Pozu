@@ -1,5 +1,8 @@
 import pygame
-from functools import partial
+from collections import OrderedDict
+
+
+AUDIO_END = pygame.USEREVENT + 1
 
 
 class Sound:
@@ -13,14 +16,14 @@ class AudioManager:
     def __init__(self):
         pygame.mixer.init(44100)
         self.pause = False
-        self.sounds = {}
+        self.sounds = OrderedDict()
 
     @staticmethod
     def play_music(name, volume=1, loop=False):
         if pygame.mixer.music.get_busy():
             return
 
-        pygame.mixer.music.load(name)
+        pygame.mixer.music.load('assets/sounds/' + name)
 
         pygame.mixer.music.set_volume(volume)
 
@@ -41,11 +44,14 @@ class AudioManager:
         pygame.mixer.music.stop()
 
     def play_sound(self, name, volume=1):
-        loaded_sound = pygame.mixer.Sound(name)
+        if name in self.sounds:
+            return
+
+        loaded_sound = pygame.mixer.Sound('assets/sounds/' + name)
 
         loaded_sound.set_volume(volume)
         chan = loaded_sound.play()
-        chan.set_endevent(partial(self._remove_sound, name))
+        chan.set_endevent(AUDIO_END)
 
         self.sounds[name] = Sound(loaded_sound, chan, False)
 
@@ -58,6 +64,10 @@ class AudioManager:
         # no check necessary; called internally
         self.sounds.pop(name)
 
+    def remove_bottom(self):
+        if len(self.sounds) > 0:
+            self.sounds.pop(list(self.sounds.keys())[0])
+
     def set_sound_pause(self, name):
         if name in self.sounds:
             self.sounds[name].paused = not self.sounds[name].paused
@@ -67,7 +77,7 @@ class AudioManager:
                 self.sounds[name].sound.pause()
 
 
-
+am = AudioManager()
 
 
 

@@ -1,5 +1,6 @@
 import states.main_state
 import pygame
+from audio.sound import am, AUDIO_END
 
 
 class GameState:
@@ -9,12 +10,17 @@ class GameState:
 
     def update(self):
         events = pygame.event.get()
-        if pygame.QUIT in [e.type for e in events]:
-            pygame.quit()
-            self.quit = True
-            return
+        for e in events:
+            if e.type == pygame.QUIT:
+                pygame.quit()
+                self.quit = True
+                return
+            elif e.type == AUDIO_END:
+                am.remove_bottom()
+
         self._state.window.clear((119, 171, 255))
-        self._state.update()
+        if not self._state.update():
+            self.quit = True
         pygame.display.update()
         return self._state.window.screen
 
