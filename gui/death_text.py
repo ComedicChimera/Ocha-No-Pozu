@@ -10,10 +10,10 @@ class DeathText:
         self.animation_over = False
 
     def update(self, window):
-        text = pygame.transform.scale(self._text,
-                                      (self._text.get_width() + self._scale_factor, self._text.get_height() + self._scale_factor))
+        text = pygame.transform.scale(self._text, (self._text.get_width() + int(self._scale_factor),
+                                                   self._text.get_height() + int(self._scale_factor)))
         window.blit(text, ((WIDTH - text.get_width()) // 2, (HEIGHT - text.get_height()) // 2))
-        if self._scale_factor == 70:
+        if self._scale_factor == 120:
             self.animation_over = True
-        self._scale_factor += 1
+        self._scale_factor += 0.5
         return window

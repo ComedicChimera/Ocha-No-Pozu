@@ -65,7 +65,8 @@ class MainState:
                 self.window.draw_tile(obj)
 
         if self.player.health == 0:
-            am.play_sound('death.ogg')
+            am.play_sound('death.ogg', volume=0.2)
+            self.window.draw_overlay((125, 125, 125), 5)
             self.window.draw_overlay(self._fade_vignette)
             if not self.death_text:
                 self.death_text = DeathText()

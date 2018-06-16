@@ -38,7 +38,7 @@ class Entity:
                     return
                 self.position.x += v
             elif k == 'y' and self.position.y + v in self.y_range:
-                if v > 0 and self.position.y + self._sprite.dimensions.y + v in self.y_range:
+                if v > 0 and not self.position.y + self._sprite.dimensions.y + v in self.y_range:
                     return
                 self.position.y += v
 
