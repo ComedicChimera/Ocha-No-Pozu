@@ -12,7 +12,7 @@ class Player(GravityEntity):
 
     def __init__(self):
         super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 192), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25),
-                         100)
+                         100, 20)
         self.animation_state = self.PlayerStates.IDLE
         self.fading = False
         self.can_fade = True
@@ -53,11 +53,11 @@ class Player(GravityEntity):
     def animate(self):
         if self.force.y_mag != 0:
             self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
-            am.stop_sound('running.ogg')
+            am.stop_sound('running_on_grass.ogg')
         elif self.animation_state == self.PlayerStates.RUNNING:
             self._change_sprite(AnimatedSprite('player_running.png', Point2D(25, 44), 7))
-            am.play_sound('running.ogg')
+            am.play_sound('running_on_grass.ogg')
             self.animation_state = self.PlayerStates.IDLE
         else:
             self._change_sprite(AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25))
-            am.stop_sound('running.ogg')
+            am.stop_sound('running_on_grass.ogg')

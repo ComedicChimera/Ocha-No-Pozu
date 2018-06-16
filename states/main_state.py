@@ -9,12 +9,12 @@ from entity.entity import Entity
 from gui.cooldown_bar import CoolDownBar
 from gui.death_text import DeathText
 from audio.sound import am
+from entity.populate import populate, get_ground
 
 
 class MainState:
     def __init__(self, screen):
         self.player = Player()
-        self.entities = [self.player]
         self.key_maps = {
             pygame.K_a: self.player.move_left,
             pygame.K_d: self.player.move_right,
@@ -22,6 +22,7 @@ class MainState:
             pygame.K_LSHIFT: self.fade
         }
         self.tile_map = generate.generate_easy_over_world()
+        self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cooldown_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
@@ -47,7 +48,10 @@ class MainState:
                 others = self.tile_map + [x for x in self.entities if x != obj]
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
 
-                obj.update()
+                if hasattr(obj, 'update_enemy'):
+                    obj.update_enemy(self.player.position)
+                else:
+                    obj.update()
 
                 # add animation
                 if hasattr(obj, 'animate'):
@@ -61,7 +65,7 @@ class MainState:
                 self.window.draw_tile(obj)
 
         if self.player.health == 0:
-            # am.play_sound('death.ogg')
+            am.play_sound('death.ogg')
             self.window.draw_overlay(self._fade_vignette)
             if not self.death_text:
                 self.death_text = DeathText()

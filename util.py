@@ -14,3 +14,6 @@ class Point2D:
 
     def __repr__(self):
         return '(%s, %s)' % (self.x, self.y)
+
+    def __add__(self, other):
+        return Point2D(self.x + other.x, self.y + other.y)

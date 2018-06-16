@@ -4,7 +4,7 @@ from util import MAP_SIZE_X, MAP_SIZE_Y
 
 
 class Entity:
-    def __init__(self, position, speed, collidable, sprite, health):
+    def __init__(self, position, speed, collidable, sprite, health, damage):
         self.position = position
         self.speed = speed
         self.force = Force()
@@ -16,6 +16,8 @@ class Entity:
         self._speed_modifier = 0
         self.invulnerable = False
         self.health = health
+
+        self.damage = damage
 
         # sprite controls
         self.rotation = 0
@@ -90,8 +92,8 @@ class Entity:
 
 
 class GravityEntity(Entity):
-    def __init__(self, position, speed, collidable, gravity, sprite, health):
-        super().__init__(position, speed, collidable, sprite, health)
+    def __init__(self, position, speed, collidable, gravity, sprite, health, damage):
+        super().__init__(position, speed, collidable, sprite, health, damage)
         self.gravity = gravity
 
     def update(self):
