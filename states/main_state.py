@@ -8,7 +8,6 @@ from util import WIDTH, HEIGHT, Point2D, PLAYER_SPAWN
 from entity.entity import Entity
 from gui.cooldown_bar import CoolDownBar
 from gui.death_text import DeathText
-from audio.sound import am
 from entity.populate import populate, get_ground
 
 
@@ -70,7 +69,6 @@ class MainState:
                 self.window.draw_tile(obj)
 
         if self.player.health == 0:
-            am.play_sound('death.ogg', volume=0.2)
             self.window.draw_overlay((125, 125, 125), 5)
             self.window.draw_overlay(self._fade_vignette)
             if not self.death_text:

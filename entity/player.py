@@ -51,7 +51,10 @@ class Player(GravityEntity):
         self.can_fade = True
 
     def animate(self):
-        if self.force.y_mag != 0:
+        if self.health == 0:
+            am.play_sound('death.ogg', volume=0.2)
+            self._change_sprite(Sprite('player_dead.png', Point2D(44, 13)))
+        elif self.force.y_mag != 0:
             self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
             am.stop_sound('running_on_grass.ogg')
         elif self.animation_state == self.PlayerStates.RUNNING:

@@ -47,8 +47,7 @@ class Entity:
 
     def sprite(self, value=None):
         if value:
-            rm.unload(self._sprite.path)
-            self._sprite = value
+            self._change_sprite(value)
         else:
             return self._sprite.get_image()
 
