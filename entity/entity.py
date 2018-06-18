@@ -18,7 +18,6 @@ class Entity:
         self.health = health
         self.max_health = health
 
-        self.agro = False
         self.damage = damage
         self.should_damage = True
 
@@ -93,6 +92,8 @@ class Entity:
         self.should_damage = True
 
     def hurt(self, damage):
+        if self.invulnerable:
+            return
         if self.health - damage >= 0:
             self.health -= damage
         else:

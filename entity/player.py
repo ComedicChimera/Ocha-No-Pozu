@@ -3,6 +3,7 @@ from util import Point2D, WIDTH, PLAYER_SPAWN
 from render.sprite import AnimatedSprite, Sprite
 from enum import Enum
 from audio.sound import am
+from random import randint
 
 
 class Player(GravityEntity):
@@ -18,6 +19,8 @@ class Player(GravityEntity):
         self.can_fade = True
 
     def hurt(self, damage):
+        if self.invulnerable:
+            return
         if self.health - damage >= 0:
             am.play_sound('damage.ogg')
             self.health -= damage
@@ -27,6 +30,7 @@ class Player(GravityEntity):
     def jump(self):
         if self.force.y_mag == 0:
             self.force.effect(self.force.x_mag, 10 + self._speed_modifier)
+            am.play_sound('jump_%d.ogg' % randint(1, 2))
 
     def move_left(self):
         self.transform(x=-1)

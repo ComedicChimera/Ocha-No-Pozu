@@ -50,8 +50,6 @@ class MainState:
 
                 # allow entities to deal damage
                 if not isinstance(obj, Player) and obj.damage > 0:
-                    if not obj.agro:
-                        obj.agro = True
                     if obj.should_damage and colliding(obj, self.player):
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
@@ -67,6 +65,8 @@ class MainState:
                 if obj.damage > 0 and colliding(self.player, obj):
                     self.player.hurt(obj.damage)
                 self.window.draw_tile(obj)
+
+        self.window.draw_gui_element(self._cool_down_bar)
 
         if self.player.health == 0:
             self.window.draw_overlay((125, 125, 125), 5)
@@ -86,7 +86,6 @@ class MainState:
             self._cool_down_bar.cool_down = 0
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
-        self.window.draw_gui_element(self._cool_down_bar)
 
         return self.player_alive
 

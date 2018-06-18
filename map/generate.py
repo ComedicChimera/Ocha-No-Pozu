@@ -28,11 +28,14 @@ def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=No
     prev_height = (top + bottom) // 2
     tile_map = []
     spawned_tree = False
+    spawned_pits = 0
     for i in [x for x in range(0, tiles) if x % 2 == 0]:
         x_pos = i * TILE_SIZE + x_offset * TILE_SIZE
-        if x_pos in gap_locations and i < tiles - 2:
+        if x_pos in gap_locations and i < tiles - 2 and spawned_pits < 3:
             tile_map.append(Tile(x_pos, TILE_SIZE * 3, *TileSet.SPIKES, 2, collidable=False, damage=100))
+            spawned_pits += 1
             continue
+        spawned_pits = 0
         height = prev_height + choice([-1, -1, 1, 1, 0])
         height = height if bottom <= height <= top else prev_height
         if start_height:
@@ -40,7 +43,7 @@ def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=No
             start_height = None
         for _ in range(2):
             if randint(0, 1) == 0:
-                tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * height, *TileSet.GRASS_SURFACE, collidable=False))
+                tile_map.append(Tile(x_pos, PLAYER_SPAWN + TILE_SIZE * height, *_get_decorate_tile(), collidable=False))
             elif randint(0, 4) == 0 and not spawned_tree and prev_height <= height:
                 tile_map.append(SpriteTile('tree.png', x_pos - 48,
                                            (PLAYER_SPAWN + TILE_SIZE * height), 128, 128))
@@ -56,3 +59,16 @@ def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=No
         prev_height = height
     return tile_map
 
+
+def _get_decorate_tile():
+    if randint(0, 4) == 0:
+        return choice([
+            TileSet.GRASS_SURFACE,
+            TileSet.PINK_FLOWER,
+            TileSet.YELLOW_FLOWER,
+            TileSet.MOSSY_LOG,
+            TileSet.LOG,
+            TileSet.BOULDER
+        ])
+    else:
+        return TileSet.GRASS_SURFACE

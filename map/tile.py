@@ -34,4 +34,9 @@ class TileSet:
     STALAGMITE = (10, 0)
     SPIKES = (11, 0)
     WATER = (12, 0)
+    PINK_FLOWER = (13, 0)
+    YELLOW_FLOWER = (14, 0)
+    BOULDER = (15, 0)
+    LOG = (16, 0)
+    MOSSY_LOG = (17, 0)
 
