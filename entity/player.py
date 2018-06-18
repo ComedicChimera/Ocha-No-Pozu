@@ -11,11 +11,18 @@ class Player(GravityEntity):
         RUNNING = 1
 
     def __init__(self):
-        super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 192), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25),
+        super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 256), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25),
                          100, 20)
         self.animation_state = self.PlayerStates.IDLE
         self.fading = False
         self.can_fade = True
+
+    def hurt(self, damage):
+        if self.health - damage >= 0:
+            am.play_sound('damage.ogg')
+            self.health -= damage
+        else:
+            self.health = 0
 
     def jump(self):
         if self.force.y_mag == 0:
