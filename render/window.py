@@ -15,7 +15,7 @@ class Window:
         self.offset = [0, 0]
 
     def set_window_offset(self, x=0, y=0):
-        self.x_range.set(x)
+        self.x_range.set(-x)
         self.y_range.set(y)
         self.offset[0] = x
         self.offset[1] = y
@@ -25,12 +25,18 @@ class Window:
         position.y += self.offset[1]
 
     def clip_objects(self, entities, tiles):
+        def check(a, b, rng):
+            if a in rng or b in rng:
+                return True
+            elif a <= rng.min and b >= rng.max:
+                return True
+            return False
+
         objects = []
         for obj in entities + tiles:
-            if obj.position.x in self.x_range or obj.position.x + self._dimensions(obj).x in self.x_range:
-                objects.append(obj)
-            elif obj.position.y in self.y_range or obj.position.y + self._dimensions(obj).y in self.y_range:
-                objects.append(obj)
+            if check(obj.position.x, obj.position.x + self._dimensions(obj).x, self.x_range):
+                if check(obj.position.y, obj.position.y + self._dimensions(obj).y, self.y_range):
+                    objects.append(obj)
         return objects
 
     def draw_gui_element(self, element):

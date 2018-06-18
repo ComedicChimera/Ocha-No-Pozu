@@ -6,7 +6,7 @@ from state import GameState
 pygame.init()
 
 screen = pygame.display.set_mode((util.WIDTH, util.HEIGHT), 0, 32)
-pygame.display.set_caption('Final Game')
+pygame.display.set_caption('Ocha No Pozu')
 pygame.display.set_icon(pygame.image.load('assets/game_icon.png'))
 
 

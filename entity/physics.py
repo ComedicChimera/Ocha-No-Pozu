@@ -28,8 +28,8 @@ class Range:
         return self.min <= item <= self.max
 
     def set(self, val):
+        self.max = val + (self.max - self.min)
         self.min = val
-        self.max = val + self.max
 
 
 class BoundingBox:

@@ -18,6 +18,7 @@ class Entity:
         self.health = health
         self.max_health = health
 
+        self.agro = False
         self.damage = damage
         self.should_damage = True
 

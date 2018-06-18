@@ -51,6 +51,8 @@ class MainState:
 
                 # allow entities to deal damage
                 if not isinstance(obj, Player) and obj.damage > 0:
+                    if not obj.agro:
+                        obj.agro = True
                     if obj.should_damage and colliding(obj, self.player):
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
