@@ -15,6 +15,17 @@ def draw_entity(screen, entity, offset):
         sprite = pygame.transform.flip(sprite, entity.flip_horizontal, entity.flip_vertical)
 
     screen.blit(sprite, (entity.position.x + offset[0], HEIGHT - entity.position.y - entity.dimensions().y + offset[1]))
+    if entity.health > 0:
+        screen = draw_health_bar(screen, entity, offset)
+    return screen
+
+
+def draw_health_bar(screen, entity, offset):
+    max_size, health = entity.dimensions().x, entity.health
+    size = health * max_size // entity.max_health
+    bar_size = 3
+    screen.fill((90, 255, 30), (entity.position.x + offset[0],
+                                HEIGHT - entity.position.y - entity.dimensions().y - (bar_size + 5) + offset[1], size, bar_size))
     return screen
 
 

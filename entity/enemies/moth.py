@@ -19,6 +19,8 @@ class Moth(Entity):
         else:
             self.transform(x=1 if player_pos.x > self.position.x else -1, y=1 if player_pos.y > self.position.y else -1)
 
+        self.update()
+
     def move_random(self):
         if self.moving_random == 5:
             self.moving_random = 0

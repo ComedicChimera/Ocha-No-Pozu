@@ -16,8 +16,10 @@ class Entity:
         self._speed_modifier = 0
         self.invulnerable = False
         self.health = health
+        self.max_health = health
 
         self.damage = damage
+        self.should_damage = True
 
         # sprite controls
         self.rotation = 0
@@ -87,6 +89,15 @@ class Entity:
         rm.unload(self._sprite.path)
         self._sprite = sprite
 
+    def reset_damage(self):
+        self.should_damage = True
+
+    def hurt(self, damage):
+        if self.health - damage >= 0:
+            self.health -= damage
+        else:
+            self.health = 0
+
     def __del__(self):
         rm.unload(self._sprite.path)
 
@@ -106,10 +117,6 @@ class GravityEntity(Entity):
             self.force.effect(0, -self.gravity)
 
         super().update()
-
-    def hurt(self, damage):
-        if self.health - damage >= 0:
-            self.health -= damage
 
     def _compute_top_collision(self):
         self.force.y_mag = -self.gravity

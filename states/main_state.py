@@ -24,22 +24,18 @@ class MainState:
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
         self.window = Window(screen, WIDTH, HEIGHT)
-        self._cooldown_bar = CoolDownBar()
+        self._cool_down_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
         self._fade_vignette = pygame.image.load('assets/sprites/vignette.png')
         self.player_alive = True
         self.death_text = None
 
     def update(self):
-        keys = pygame.key.get_pressed()
-        for key, fn in self.key_maps.items():
-            if keys[key]:
-                fn()
-
-        # image = self.background.get_image().convert_alpha(self.window.screen)
-        # image = pygame.transform.scale(image, (WIDTH, HEIGHT))
-        #
-        # self.window.blit(image, (0, 0))
+        if not self.death_text:
+            keys = pygame.key.get_pressed()
+            for key, fn in self.key_maps.items():
+                if keys[key]:
+                    fn()
 
         objects = self.window.clip_objects(self.entities, self.tile_map)
 
@@ -52,6 +48,13 @@ class MainState:
                     obj.update_enemy(self.player.position)
                 else:
                     obj.update()
+
+                # allow entities to deal damage
+                if not isinstance(obj, Player) and obj.damage > 0:
+                    if obj.should_damage and colliding(obj, self.player):
+                        self.player.hurt(obj.damage)
+                        obj.should_damage = False
+                        obj.set_timer(20, obj.reset_damage)
 
                 # add animation
                 if hasattr(obj, 'animate'):
@@ -76,14 +79,14 @@ class MainState:
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
             self.window.draw_overlay((78, 0, 107), 10)
-            self._cooldown_bar.cool_down = (15 - self.player.timer_frames) * 6
+            self._cool_down_bar.cool_down = (15 - self.player.timer_frames) * 6
         elif not self.player.can_fade:
-            self._cooldown_bar.cool_down = self.player.timer_frames / 2
-        elif self._cooldown_bar.cool_down != 0:
-            self._cooldown_bar.cool_down = 0
+            self._cool_down_bar.cool_down = self.player.timer_frames / 2
+        elif self._cool_down_bar.cool_down != 0:
+            self._cool_down_bar.cool_down = 0
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
-        self.window.draw_gui_element(self._cooldown_bar)
+        self.window.draw_gui_element(self._cool_down_bar)
 
         return self.player_alive
 
