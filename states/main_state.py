@@ -35,8 +35,8 @@ class MainState:
         self._paused = False
 
     def update(self):
-        keys = pygame.key.get_pressed()
         if not self.death_text and not self._paused:
+            keys = pygame.key.get_pressed()
             for key, fn in self.key_maps.items():
                 if keys[key]:
                     fn()
@@ -77,7 +77,7 @@ class MainState:
         self.window.draw_gui_element(self._cool_down_bar)
 
         if self._paused:
-            self._update_paused(keys)
+            self._update_paused()
         elif self.player.health == 0:
             self.window.draw_overlay((125, 125, 125), 5)
             self.window.draw_overlay(self._fade_vignette)
@@ -109,15 +109,10 @@ class MainState:
     def _invert_pause(self):
         self._paused = not self._paused
 
-    def _update_paused(self, keys):
+    def _update_paused(self):
         self.window.draw_overlay((125, 125, 125), 50)
         if not self._pause_menu:
             self._pause_menu = PauseMenu()
-        for key in keys:
-            if key == pygame.K_w:
-                self._pause_menu.cycle_selected()
-            elif key == pygame.K_s:
-                self._pause_menu.cycle_selected()
         x, y = pygame.mouse.get_pos()
         self._pause_menu.set_selected_from_position(x, y, pygame.mouse.get_pressed()[0] == 1)
         self.window = self._pause_menu.draw_menu(self.window)
