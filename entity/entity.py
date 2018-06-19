@@ -30,6 +30,7 @@ class Entity:
             self.timer_frames -= 1
             if self.timer_frames == 0 and self._timer_end_event:
                 self._timer_end_event()
+                self._timer_end_event = None
         self._handle_collide()
 
     def transform(self, **kwargs):
@@ -94,7 +95,7 @@ class Entity:
     def hurt(self, damage):
         if self.invulnerable:
             return
-        if self.health - damage >= 0:
+        if self.health - damage > 0:
             self.health -= damage
         else:
             self.health = 0

@@ -9,6 +9,7 @@ from entity.entity import Entity
 from gui.cooldown_bar import CoolDownBar
 from gui.death_text import DeathText
 from entity.populate import populate, get_ground
+from .pause_state import PauseMenu
 
 
 class MainState:
@@ -18,7 +19,9 @@ class MainState:
             pygame.K_a: self.player.move_left,
             pygame.K_d: self.player.move_right,
             pygame.K_SPACE: self.player.jump,
-            pygame.K_LSHIFT: self.fade
+            pygame.K_LSHIFT: self.fade,
+            pygame.K_ESCAPE: self._invert_pause,
+            pygame.K_q: self.player.swing
         }
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
@@ -28,10 +31,12 @@ class MainState:
         self._fade_vignette = pygame.image.load('assets/sprites/vignette.png')
         self.player_alive = True
         self.death_text = None
+        self._pause_menu = None
+        self._paused = False
 
     def update(self):
-        if not self.death_text:
-            keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
+        if not self.death_text and not self._paused:
             for key, fn in self.key_maps.items():
                 if keys[key]:
                     fn()
@@ -43,10 +48,15 @@ class MainState:
                 others = self.tile_map + [x for x in self.entities if x != obj]
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
 
-                if hasattr(obj, 'update_enemy'):
-                    obj.update_enemy(self.player.position)
-                else:
-                    obj.update()
+                if not self._paused:
+                    if hasattr(obj, 'update_enemy'):
+                        obj.update_enemy(self.player.position)
+                    else:
+                        obj.update()
+
+                # add animation
+                if hasattr(obj, 'animate'):
+                    obj.animate()
 
                 # allow entities to deal damage
                 if not isinstance(obj, Player) and obj.damage > 0:
@@ -54,10 +64,8 @@ class MainState:
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
                         obj.set_timer(20, obj.reset_damage)
-
-                # add animation
-                if hasattr(obj, 'animate'):
-                    obj.animate()
+                    if colliding(self.player, obj) and self.player.swinging:
+                        obj.hurt(self.player.damage)
 
                 self.window.draw_entity(obj)
             # assume tile
@@ -68,7 +76,9 @@ class MainState:
 
         self.window.draw_gui_element(self._cool_down_bar)
 
-        if self.player.health == 0:
+        if self._paused:
+            self._update_paused(keys)
+        elif self.player.health == 0:
             self.window.draw_overlay((125, 125, 125), 5)
             self.window.draw_overlay(self._fade_vignette)
             if not self.death_text:
@@ -87,8 +97,33 @@ class MainState:
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
 
+        # trim dead entities
+        self.entities = [x for x in self.entities if x.health > 0 or isinstance(x, Player)]
+
         return self.player_alive
 
     def fade(self):
         if not self.player.fading:
             self.player.fade()
+
+    def _invert_pause(self):
+        self._paused = not self._paused
+
+    def _update_paused(self, keys):
+        self.window.draw_overlay((125, 125, 125), 50)
+        if not self._pause_menu:
+            self._pause_menu = PauseMenu()
+        for key in keys:
+            if key == pygame.K_w:
+                self._pause_menu.cycle_selected()
+            elif key == pygame.K_s:
+                self._pause_menu.cycle_selected()
+        x, y = pygame.mouse.get_pos()
+        self._pause_menu.set_selected_from_position(x, y, pygame.mouse.get_pressed()[0] == 1)
+        self.window = self._pause_menu.draw_menu(self.window)
+        if self._pause_menu.state == 1:
+            self._paused = False
+        elif self._pause_menu.state == 2:
+            self.player_alive = False
+        self._pause_menu.state = 0
+

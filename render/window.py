@@ -70,3 +70,9 @@ class Window:
 
     def clear(self, color):
         self.screen.fill(color)
+
+    def draw_rect(self, color, rect):
+        self.screen.fill(color, rect)
+
+    def draw_text(self, text, position):
+        self.blit(text, position)

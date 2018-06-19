@@ -31,7 +31,7 @@ def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=No
     spawned_pits = 0
     for i in [x for x in range(0, tiles) if x % 2 == 0]:
         x_pos = i * TILE_SIZE + x_offset * TILE_SIZE
-        if x_pos in gap_locations and i < tiles - 2 and spawned_pits < 3:
+        if x_pos in gap_locations and i < tiles - 2 and spawned_pits < 2:
             tile_map.append(Tile(x_pos, TILE_SIZE * 3, *TileSet.SPIKES, 2, collidable=False, damage=100))
             spawned_pits += 1
             continue

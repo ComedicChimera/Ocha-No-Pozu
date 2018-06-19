@@ -21,11 +21,10 @@ def draw_entity(screen, entity, offset):
 
 
 def draw_health_bar(screen, entity, offset):
-    max_size, health = entity.dimensions().x, entity.health
-    size = health * max_size // entity.max_health
     bar_size = 3
-    screen.fill((90, 255, 30), (entity.position.x + offset[0],
-                                HEIGHT - entity.position.y - entity.dimensions().y - (bar_size + 5) + offset[1], size, bar_size))
+    x_offset = (entity.dimensions().x - entity.max_health // 3) // 2
+    screen.fill((90, 255, 30), (entity.position.x + offset[0] + x_offset,
+                                HEIGHT - entity.position.y - entity.dimensions().y - (bar_size + 5) + offset[1], entity.health // 3, bar_size))
     return screen
 
 

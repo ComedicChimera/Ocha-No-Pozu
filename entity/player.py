@@ -10,22 +10,37 @@ class Player(GravityEntity):
     class PlayerStates(Enum):
         IDLE = 0
         RUNNING = 1
+        SWINGING = 2
+        SWING_RUNNING = 3
 
     def __init__(self):
         super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 256), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25),
-                         100, 20)
+                         100, 4)
         self.animation_state = self.PlayerStates.IDLE
         self.fading = False
         self.can_fade = True
+        self.swinging = False
 
     def hurt(self, damage):
         if self.invulnerable:
             return
-        if self.health - damage >= 0:
+        if self.health - damage > 0:
             am.play_sound('damage.ogg')
             self.health -= damage
         else:
             self.health = 0
+
+    def swing(self):
+        if self.swinging:
+            return
+        am.play_sound('sword_swing_%s.ogg' % randint(1, 2))
+        self.animation_state = self.PlayerStates.SWINGING
+        self.swinging = True
+        self.set_timer(10, self._reset_swing)
+
+    def _reset_swing(self):
+        self.animation_state = self.PlayerStates.IDLE
+        self.swinging = False
 
     def jump(self):
         if self.force.y_mag == 0:
@@ -35,12 +50,18 @@ class Player(GravityEntity):
     def move_left(self):
         self.transform(x=-1)
         self.flip_horizontal = True
-        self.animation_state = self.PlayerStates.RUNNING
+        if self.swinging:
+            self.animation_state = self.PlayerStates.SWING_RUNNING
+        else:
+            self.animation_state = self.PlayerStates.RUNNING
 
     def move_right(self):
         self.transform(x=1)
         self.flip_horizontal = False
-        self.animation_state = self.PlayerStates.RUNNING
+        if self.swinging:
+            self.animation_state = self.PlayerStates.SWING_RUNNING
+        else:
+            self.animation_state = self.PlayerStates.RUNNING
 
     def fade(self):
         if not self.can_fade:
@@ -65,6 +86,10 @@ class Player(GravityEntity):
         if self.health == 0:
             am.play_sound('death.ogg', volume=0.2)
             self._change_sprite(Sprite('player_dead.png', Point2D(44, 13)))
+        elif self.animation_state == self.PlayerStates.SWINGING:
+            self._change_sprite(AnimatedSprite('player_swing.png', Point2D(50, 43), 5, speed=0.5))
+        elif self.animation_state == self.PlayerStates.SWING_RUNNING:
+            self._change_sprite(AnimatedSprite('player_swing_running.png', Point2D(50, 44), 5, speed=0.5))
         elif self.force.y_mag != 0:
             self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
             am.stop_sound('running_on_grass.ogg')
