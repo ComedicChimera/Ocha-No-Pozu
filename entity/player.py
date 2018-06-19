@@ -70,6 +70,7 @@ class Player(GravityEntity):
         self.fading = True
         self.invulnerable = True
         self.set_timer(15, end_event=self._end_fade)
+        am.play_sound('powerup_3.ogg')
 
     def _end_fade(self):
         self._speed_modifier = 0
