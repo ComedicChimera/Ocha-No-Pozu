@@ -28,9 +28,8 @@ class Entity:
     def update(self):
         if self.timer_frames > 0:
             self.timer_frames -= 1
-            if self.timer_frames == 0 and self._timer_end_event:
-                self._timer_end_event()
-                self._timer_end_event = None
+        elif self.timer_frames == 0 and self._timer_end_event:
+            self._timer_end_event()
         self._handle_collide()
 
     def transform(self, **kwargs):

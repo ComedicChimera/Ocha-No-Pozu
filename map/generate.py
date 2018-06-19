@@ -67,8 +67,7 @@ def _get_decorate_tile():
             TileSet.PINK_FLOWER,
             TileSet.YELLOW_FLOWER,
             TileSet.MOSSY_LOG,
-            TileSet.LOG,
-            TileSet.BOULDER
+            TileSet.LOG
         ])
     else:
         return TileSet.GRASS_SURFACE
