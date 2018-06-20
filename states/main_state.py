@@ -63,7 +63,7 @@ class MainState:
                     if obj.should_damage and colliding(obj, self.player):
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
-                        obj.set_timer(20, obj.reset_damage)
+                        obj.set_timer('reset-damage', 20, obj.reset_damage)
                     if colliding(self.player, obj) and self.player.swinging:
                         obj.hurt(self.player.damage)
 
@@ -89,9 +89,9 @@ class MainState:
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
             self.window.draw_overlay((78, 0, 107), 10)
-            self._cool_down_bar.cool_down = (15 - self.player.timer_frames) * 6
-        elif not self.player.can_fade:
-            self._cool_down_bar.cool_down = self.player.timer_frames / 2
+            self._cool_down_bar.cool_down = (15 - self.player.timers['fade'][0]) * 6
+        elif not self.player.can_fade and 'fade' in self.player.timers:
+            self._cool_down_bar.cool_down = self.player.timers['fade'][0] / 2
         elif self._cool_down_bar.cool_down != 0:
             self._cool_down_bar.cool_down = 0
 

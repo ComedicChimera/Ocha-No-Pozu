@@ -3,6 +3,8 @@
     <words>
       <w>collidable</w>
       <w>collider</w>
+      <w>teleport</w>
+      <w>teleporter</w>
     </words>
   </dictionary>
 </component>

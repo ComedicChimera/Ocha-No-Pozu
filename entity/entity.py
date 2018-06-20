@@ -11,8 +11,7 @@ class Entity:
         self.collidable = collidable
         self._sprite = sprite
         self.x_range, self.y_range = Range(MAP_SIZE_X), Range(MAP_SIZE_Y)
-        self.timer_frames = 0
-        self._timer_end_event = None
+        self.timers = {}
         self._speed_modifier = 0
         self.invulnerable = False
         self.health = health
@@ -26,10 +25,17 @@ class Entity:
         self.flip_horizontal, self.flip_vertical = False, False
 
     def update(self):
-        if self.timer_frames > 0:
-            self.timer_frames -= 1
-        elif self.timer_frames == 0 and self._timer_end_event:
-            self._timer_end_event()
+        remove_keys = []
+        end_events = []
+        for k, v in self.timers.items():
+            if v[0] > 0:
+                self.timers[k][0] -= 1
+            else:
+                remove_keys.append(k)
+                end_events.append(v[1])
+        for key, func in zip(remove_keys, end_events):
+            self.timers.pop(key)
+            func()
         self._handle_collide()
 
     def transform(self, **kwargs):
@@ -53,9 +59,8 @@ class Entity:
     def dimensions(self):
         return self._sprite.dimensions
 
-    def set_timer(self, timer_frames, end_event=None):
-        self.timer_frames = timer_frames
-        self._timer_end_event = end_event
+    def set_timer(self, timer_name, timer_frames, end_event):
+        self.timers[timer_name] = [timer_frames, end_event]
 
     def _handle_collide(self):
         # bottom collision

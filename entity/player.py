@@ -36,7 +36,7 @@ class Player(GravityEntity):
         am.play_sound('sword_swing_%s.ogg' % randint(1, 2))
         self.animation_state = self.PlayerStates.SWINGING
         self.swinging = True
-        self.set_timer(10, self._reset_swing)
+        self.set_timer('swing', 10, self._reset_swing)
 
     def _reset_swing(self):
         self.animation_state = self.PlayerStates.IDLE
@@ -69,7 +69,7 @@ class Player(GravityEntity):
         self._speed_modifier = 10
         self.fading = True
         self.invulnerable = True
-        self.set_timer(15, end_event=self._end_fade)
+        self.set_timer('fade', 15, end_event=self._end_fade)
         am.play_sound('fade.ogg')
 
     def _end_fade(self):
@@ -78,7 +78,7 @@ class Player(GravityEntity):
         self.invulnerable = False
 
         self.can_fade = False
-        self.set_timer(180, self._enable_fade)
+        self.set_timer('fade', 180, self._enable_fade)
 
     def _enable_fade(self):
         self.can_fade = True
