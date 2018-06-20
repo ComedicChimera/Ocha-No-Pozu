@@ -15,6 +15,7 @@ def generate_easy_over_world():
     # generate normal over-world
     tile_map += _generate_over_world(40, 7, 2)
     tile_map += _generate_over_world(40, 7, 2, 40, 7, tile_map[-1].position.y // TILE_SIZE)
+    tile_map += _generate_cave_entrance()
     return tile_map
 
 
@@ -57,6 +58,30 @@ def _generate_over_world(tiles, top, bottom, x_offset=0, gaps=0, start_height=No
                 tile_map.extend([Tile(x_pos, PLAYER_SPAWN, *TileSet.STONE, repeat_y=height - 3)])
             x_pos += TILE_SIZE
         prev_height = height
+    return tile_map
+
+
+def _generate_cave_entrance():
+    base = 7
+    tile_map = []
+    for i in range(0, 15):
+        if i < 5:
+            floor = base - (i - 1 if i > 3 else i)
+            tile_map.append(
+                Tile((80 + i) * TILE_SIZE, 0, *TileSet.STONE, repeat_y=floor))
+            if i > 0:
+                cave_height = randint(5, 6)
+                tile_map.extend([
+                    Tile((80 + i) * TILE_SIZE, (floor + cave_height) * TILE_SIZE, *TileSet.STONE, repeat_y=i * 2),
+                    Tile((80 + i) * TILE_SIZE, ((floor + cave_height) + i * 2) * TILE_SIZE, *TileSet.SNOW_STONE)
+                ])
+            if randint(0, 2) == 0:
+                tile_map.append(Tile((80 + i) * TILE_SIZE, floor * TILE_SIZE, *TileSet.STALAGMITE, collidable=False))
+        else:
+            tile_map.extend([
+                Tile((80 + i) * TILE_SIZE, 0, *TileSet.STONE, repeat_y=base + i * 2 + 2),
+                Tile((80 + i) * TILE_SIZE, (base + i * 2 + 2) * TILE_SIZE, *TileSet.SNOW_STONE)
+            ])
     return tile_map
 
 

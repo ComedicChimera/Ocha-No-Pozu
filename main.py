@@ -17,6 +17,7 @@ while not game_state.quit:
     screen = game_state.update()
     clock.tick_busy_loop(30)
 
+pygame.quit()
 
 
 
