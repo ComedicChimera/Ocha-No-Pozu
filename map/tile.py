@@ -46,4 +46,5 @@ class TileSet:
     ICE_ROCK = (1, 3)
     ICE_STALACTITE = (2, 3)
     ICE_STALAGMITE = (3, 3)
-
+    TORCH = (4, 3)
+    GLOOM_STONE = (5, 3)

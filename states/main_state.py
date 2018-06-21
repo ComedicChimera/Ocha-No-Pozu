@@ -9,7 +9,7 @@ from entity.entity import Entity
 from gui.hud.cooldown_bar import CoolDownBar
 from gui.hud.death_text import DeathText
 from entity.populate import populate, get_ground
-from states.pause_state import PauseMenu
+from gui.menu.pause_menu import PauseMenu
 from entity.teleporter import Teleporter
 
 
@@ -26,7 +26,7 @@ class MainState:
         }
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
-        self._teleporter = Teleporter(TILE_SIZE * 86, 5 * TILE_SIZE, 'CAVE')
+        self._teleporter = Teleporter(TILE_SIZE * 83, 0, 2, 4, 'CAVE')
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cool_down_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
@@ -35,6 +35,7 @@ class MainState:
         self.death_text = None
         self._pause_menu = None
         self._paused = False
+        self._gloom = False
 
     def update(self):
         if not self.death_text and not self._paused:
@@ -84,6 +85,8 @@ class MainState:
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
             self.window.draw_overlay((78, 0, 107), 10)
+        elif self._teleporter.check_collision(self.player.position):
+            self._teleport(self._teleporter.destination)
 
         self._cool_down_bar.update(self.player)
 
@@ -91,6 +94,9 @@ class MainState:
 
         # trim dead entities
         self.entities = [x for x in self.entities if x.health > 0 or isinstance(x, Player)]
+
+        if self._gloom:
+            pass
 
         return self.player_alive
 
@@ -106,8 +112,8 @@ class MainState:
         if not self._pause_menu:
             self._pause_menu = PauseMenu()
         x, y = pygame.mouse.get_pos()
-        self._pause_menu.set_selected_from_position(x, y, pygame.mouse.get_pressed()[0] == 1)
-        self.window = self._pause_menu.draw_menu(self.window)
+        self._pause_menu.update(Point2D(x, y), pygame.mouse.get_pressed()[0] == 1)
+        self.window.draw_menu(self._pause_menu)
         if self._pause_menu.state == 1:
             self._paused = False
         elif self._pause_menu.state == 2:
@@ -125,4 +131,4 @@ class MainState:
             self.player_alive = False
 
     def _teleport(self, destination):
-        pass
+        print(destination)

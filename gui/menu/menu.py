@@ -45,3 +45,4 @@ class Menu:
                     button.click()
             else:
                 button.selected = False
+

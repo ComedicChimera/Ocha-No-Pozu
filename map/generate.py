@@ -67,15 +67,16 @@ def _generate_cave_entrance():
     for i in range(0, 15):
         if i < 5:
             floor = base - (i - 1 if i > 3 else i)
+            floor_stone = TileSet.STONE if i < 3 else TileSet.GLOOM_STONE
             tile_map.append(
-                Tile((80 + i) * TILE_SIZE, 0, *TileSet.STONE, repeat_y=floor))
+                Tile((80 + i) * TILE_SIZE, 0, *floor_stone, repeat_y=floor, collidable=i < 3))
             if i > 0:
                 cave_height = randint(5, 6)
                 tile_map.extend([
                     Tile((80 + i) * TILE_SIZE, (floor + cave_height) * TILE_SIZE, *TileSet.STONE, repeat_y=i * 2),
                     Tile((80 + i) * TILE_SIZE, ((floor + cave_height) + i * 2) * TILE_SIZE, *TileSet.SNOW_STONE)
                 ])
-            if randint(0, 2) == 0:
+            if randint(0, 2) == 0 and i < 3:
                 tile_map.append(Tile((80 + i) * TILE_SIZE, floor * TILE_SIZE, *TileSet.STALAGMITE, collidable=False))
         else:
             tile_map.extend([
