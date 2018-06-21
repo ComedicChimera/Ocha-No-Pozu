@@ -37,11 +37,10 @@ class MainState:
         self._pause_menu = None
         self._paused = False
         self._gloom = False
-        # LAVA LIGHT: Light(200, 100, (255, 209, 191), 10)
         self.lights = []
 
     def update(self):
-        self.window.clear((119, 171, 255))
+        self.window.clear((50, 50, 60) if self._gloom else (119, 171, 255))
         if not self.death_text and not self._paused:
             keys = pygame.key.get_pressed()
             for key, fn in self.key_maps.items():
@@ -135,4 +134,9 @@ class MainState:
             self.player_alive = False
 
     def _teleport(self, destination):
-        print(destination)
+        if destination == 'CAVE':
+            self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 7 * TILE_SIZE
+            self.entities = [self.player]
+            self.tile_map = generate.generate_cave()
+            self._gloom = True
+            self.lights = [Light(200, 100, (255, 209, 191), 10)]
