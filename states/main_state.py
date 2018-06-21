@@ -4,12 +4,13 @@ from render.sprite import AnimatedSprite
 import map.generate as generate
 from entity.collision import calculate_x_range, calculate_y_range, colliding
 from render.window import Window
-from util import WIDTH, HEIGHT, Point2D, PLAYER_SPAWN
+from util import WIDTH, HEIGHT, Point2D, PLAYER_SPAWN, TILE_SIZE
 from entity.entity import Entity
-from gui.cooldown_bar import CoolDownBar
-from gui.death_text import DeathText
+from gui.hud.cooldown_bar import CoolDownBar
+from gui.hud.death_text import DeathText
 from entity.populate import populate, get_ground
-from .pause_state import PauseMenu
+from states.pause_state import PauseMenu
+from entity.teleporter import Teleporter
 
 
 class MainState:
@@ -25,6 +26,7 @@ class MainState:
         }
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
+        self._teleporter = Teleporter(TILE_SIZE * 86, 5 * TILE_SIZE, 'CAVE')
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cool_down_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
@@ -49,14 +51,13 @@ class MainState:
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
 
                 if not self._paused:
-                    if hasattr(obj, 'update_enemy'):
-                        obj.update_enemy(self.player.position)
+                    if obj.enemy:
+                        obj.update(self.player.position)
                     else:
                         obj.update()
 
                 # add animation
-                if hasattr(obj, 'animate'):
-                    obj.animate()
+                obj.animate()
 
                 # allow entities to deal damage
                 if not isinstance(obj, Player) and obj.damage > 0:
@@ -79,21 +80,12 @@ class MainState:
         if self._paused:
             self._update_paused()
         elif self.player.health == 0:
-            self.window.draw_overlay((125, 125, 125), 5)
-            self.window.draw_overlay(self._fade_vignette)
-            if not self.death_text:
-                self.death_text = DeathText()
-            self.window = self.death_text.update(self.window)
-            if self.death_text.animation_over:
-                self.player_alive = False
+            self._play_death_animation()
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
             self.window.draw_overlay((78, 0, 107), 10)
-            self._cool_down_bar.cool_down = (15 - self.player.timers['fade'][0]) * 6
-        elif not self.player.can_fade and 'fade' in self.player.timers:
-            self._cool_down_bar.cool_down = self.player.timers['fade'][0] / 2
-        elif self._cool_down_bar.cool_down != 0:
-            self._cool_down_bar.cool_down = 0
+
+        self._cool_down_bar.update(self.player)
 
         self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
 
@@ -122,3 +114,15 @@ class MainState:
             self.player_alive = False
         self._pause_menu.state = 0
 
+    def _play_death_animation(self):
+        self.window.draw_overlay((125, 125, 125), 5)
+        self.window.draw_overlay(self._fade_vignette)
+        if not self.death_text:
+            self.death_text = DeathText()
+        self.death_text.update()
+        self.window.draw_gui_element(self.death_text)
+        if self.death_text.animation_over:
+            self.player_alive = False
+
+    def _teleport(self, destination):
+        pass

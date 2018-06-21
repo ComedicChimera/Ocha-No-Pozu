@@ -74,5 +74,6 @@ class Window:
     def draw_rect(self, color, rect):
         self.screen.fill(color, rect)
 
-    def draw_text(self, text, position):
-        self.blit(text, position)
+    def draw_menu(self, menu):
+        for button in menu.buttons:
+            self.blit(button.get_image(), (button.position.x, button.position.y))

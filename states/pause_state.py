@@ -32,12 +32,12 @@ class PauseMenu:
         width, height = self._button_dimensions.x, self._button_dimensions.y
         window.draw_rect(selected_color if self.menu['Continue'][1] else deselected_color, (*top, width, height))
         window.draw_rect((180, 180, 180), (top[0] + 2, top[1] + 2, width - 4, height - 4))
-        window.draw_text(self._continue_text, (top[0] + (self._button_dimensions.x - self._continue_text.get_width()) // 2,
-                                               top[1] + (self._button_dimensions.y - self._continue_text.get_height()) // 2))
+        window.blit(self._continue_text, (top[0] + (self._button_dimensions.x - self._continue_text.get_width()) // 2, top[1] +
+                                          (self._button_dimensions.y - self._continue_text.get_height()) // 2))
         window.draw_rect(selected_color if self.menu['Quit'][1] else deselected_color, (*bottom, width, height))
         window.draw_rect((180, 180, 180), (bottom[0] + 2, bottom[1] + 2, width - 4, height - 4))
-        window.draw_text(self._quit_text, (bottom[0] + (self._button_dimensions.x - self._quit_text.get_width()) // 2,
-                                           bottom[1] + (self._button_dimensions.y - self._quit_text.get_height()) // 2))
+        window.blit(self._quit_text, (bottom[0] + (self._button_dimensions.x - self._quit_text.get_width()) // 2, bottom[1]
+                                      + (self._button_dimensions.y - self._quit_text.get_height()) // 2))
         return window
 
     def _calculate_button_positions(self):

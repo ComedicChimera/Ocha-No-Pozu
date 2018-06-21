@@ -6,11 +6,11 @@ from random import randint, choice
 
 class Moth(Entity):
     def __init__(self, x, y):
-        super().__init__(Point2D(x, y), 5, False, AnimatedSprite('moth.png', Point2D(64, 64), 8), 60, 20)
+        super().__init__(Point2D(x, y), 5, False, AnimatedSprite('moth.png', Point2D(64, 64), 8), 60, 20, enemy=True)
         self.moving_random = 0
         self.random_direction = (0, 0)
 
-    def update_enemy(self, player_pos):
+    def update(self, player_pos):
         if self.moving_random > 0:
             self.move_random()
         elif randint(0, 5) == 0:
@@ -19,7 +19,7 @@ class Moth(Entity):
         else:
             self.transform(x=1 if player_pos.x > self.position.x else -1, y=1 if player_pos.y > self.position.y else -1)
 
-        self.update()
+        super().update()
 
     def move_random(self):
         if self.moving_random == 5:

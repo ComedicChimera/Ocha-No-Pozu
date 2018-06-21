@@ -6,5 +6,5 @@ class GUIElement:
         self.position = Point2D(x, y)
         self.dimensions = Point2D(width, height)
 
-    def update(self):
+    def update(self, *args):
         pass

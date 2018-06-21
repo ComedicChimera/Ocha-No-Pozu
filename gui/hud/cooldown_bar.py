@@ -1,4 +1,4 @@
-from gui.element import GUIElement
+from gui.hud.element import GUIElement
 from render.sprite import rm
 from copy import copy
 
@@ -15,3 +15,11 @@ class CoolDownBar(GUIElement):
             image.fill((143, 39, 255), (36, 16, 90 - self.cool_down, 6))
             return image
         return self.base_image
+
+    def update(self, player):
+        if player.fading:
+            self.cool_down = (15 - player.timers['fade'][0]) * 6
+        elif not player.can_fade and 'fade' in player.timers:
+            self.cool_down = player.timers['fade'][0] / 2
+        elif self.cool_down != 0:
+            self.cool_down = 0

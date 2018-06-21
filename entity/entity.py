@@ -4,7 +4,7 @@ from util import MAP_SIZE_X, MAP_SIZE_Y
 
 
 class Entity:
-    def __init__(self, position, speed, collidable, sprite, health, damage):
+    def __init__(self, position, speed, collidable, sprite, health, damage, enemy=False):
         self.position = position
         self.speed = speed
         self.force = Force()
@@ -24,7 +24,10 @@ class Entity:
         self.rotation = 0
         self.flip_horizontal, self.flip_vertical = False, False
 
-    def update(self):
+        # is enemy
+        self.enemy = enemy
+
+    def update(self, *args):
         remove_keys = []
         end_events = []
         for k, v in self.timers.items():
@@ -51,6 +54,8 @@ class Entity:
                 self.position.y += v
 
     def sprite(self, value=None):
+        if not self._sprite:
+            return
         if value:
             self._change_sprite(value)
         else:
@@ -104,8 +109,13 @@ class Entity:
         else:
             self.health = 0
 
+    # to be overloaded
+    def animate(self):
+        pass
+
     def __del__(self):
-        rm.unload(self._sprite.path)
+        if self._sprite:
+            rm.unload(self._sprite.path)
 
 
 class GravityEntity(Entity):
@@ -113,7 +123,7 @@ class GravityEntity(Entity):
         super().__init__(position, speed, collidable, sprite, health, damage)
         self.gravity = gravity
 
-    def update(self):
+    def update(self, *args):
         if self.force.y_mag != 0:
             self.position = self.force.apply(self.position)
             self.force.effect(0, -self.gravity)
