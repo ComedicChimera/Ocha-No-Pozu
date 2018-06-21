@@ -37,7 +37,8 @@ class MainState:
         self._pause_menu = None
         self._paused = False
         self._gloom = False
-        self.lights = [Light(200, 100, 1, 1, (255, 209, 191), 10)]
+        # LAVA LIGHT: Light(200, 100, (255, 209, 191), 10)
+        self.lights = []
 
     def update(self):
         self.window.clear((119, 171, 255))

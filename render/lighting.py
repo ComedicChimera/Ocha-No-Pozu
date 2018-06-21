@@ -6,9 +6,8 @@ circle_filter = pygame.image.load('assets/light.png')
 
 
 class Light:
-    def __init__(self, x, y, width, height, color=None, spread=4):
+    def __init__(self, x, y, color=None, spread=4):
         self.x, self.y = x, y
-        self.width, self.height = width, height
         color = tuple(map(lambda v: 255 - v, color)) if color else None
         if color:
             self.filter = _colorize(pygame.transform.scale(circle_filter, (spread * TILE_SIZE, spread * TILE_SIZE)), color)
@@ -16,9 +15,7 @@ class Light:
             self.filter = pygame.transform.scale(circle_filter, (spread * TILE_SIZE, spread * TILE_SIZE))
 
     def draw_light(self, gloom, offset):
-        for px in range(self.width):
-            for py in range(self.height):
-                gloom.blit(self.filter, (self.x + offset[0] + px, self.y + offset[1] + py))
+        gloom.blit(self.filter, (self.x + offset[0], self.y + offset[1]))
         return gloom
 
 
