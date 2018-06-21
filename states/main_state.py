@@ -11,6 +11,7 @@ from gui.hud.death_text import DeathText
 from entity.populate import populate, get_ground
 from gui.menu.pause_menu import PauseMenu
 from entity.teleporter import Teleporter
+from render.lighting import render_lights, Light
 
 
 class MainState:
@@ -36,8 +37,10 @@ class MainState:
         self._pause_menu = None
         self._paused = False
         self._gloom = False
+        self.lights = [Light(200, 100, 1, 1, (255, 209, 191), 10)]
 
     def update(self):
+        self.window.clear((119, 171, 255))
         if not self.death_text and not self._paused:
             keys = pygame.key.get_pressed()
             for key, fn in self.key_maps.items():
@@ -76,6 +79,9 @@ class MainState:
                     self.player.hurt(obj.damage)
                 self.window.draw_tile(obj)
 
+        if self._gloom:
+            self.window = render_lights(self.window, self.lights, self.window.offset)
+
         self.window.draw_gui_element(self._cool_down_bar)
 
         if self._paused:
@@ -94,9 +100,6 @@ class MainState:
 
         # trim dead entities
         self.entities = [x for x in self.entities if x.health > 0 or isinstance(x, Player)]
-
-        if self._gloom:
-            pass
 
         return self.player_alive
 

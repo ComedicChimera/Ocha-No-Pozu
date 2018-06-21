@@ -18,7 +18,6 @@ class GameState:
             elif e.type == AUDIO_END:
                 am.remove_bottom()
 
-        self._state.window.clear((119, 171, 255))
         if not self._state.update():
             self.quit = True
         pygame.display.update()
