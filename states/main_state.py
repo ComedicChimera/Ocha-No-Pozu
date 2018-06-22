@@ -141,8 +141,11 @@ class MainState:
         pygame.display.update()
         if destination == 'CAVE':
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 7 * TILE_SIZE
-            self.entities = self.entities[:1]
             self.tile_map, self.lights = generate.generate_cave()
+            self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 40), 6, 2, 2)
             self._gloom = True
+            self._teleporter = Teleporter(51 * TILE_SIZE, self.tile_map[-1].position.y, 4, 4, 'LAVA_CAVE')
             # lava light: Light(200, 100, (255, 209, 191), 10)
+        else:
+            print(destination)
 

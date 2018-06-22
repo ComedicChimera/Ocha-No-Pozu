@@ -18,7 +18,7 @@ def generate_easy_over_world():
 
 
 def generate_cave():
-    tile_map = [Tile(-10 * TILE_SIZE, HEIGHT, *TileSet.STONE, repeat_y=5, repeat_x=40)]
+    tile_map = [Tile(-10 * TILE_SIZE, HEIGHT, *TileSet.STONE, repeat_y=5, repeat_x=60)]
     for i in range(-10, 2):
         tile_map.append(Tile(i * TILE_SIZE, 0, *TileSet.STONE, repeat_y=16))
     cave, lights = generate_first_cave()

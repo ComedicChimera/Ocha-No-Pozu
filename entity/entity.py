@@ -119,8 +119,8 @@ class Entity:
 
 
 class GravityEntity(Entity):
-    def __init__(self, position, speed, collidable, gravity, sprite, health, damage):
-        super().__init__(position, speed, collidable, sprite, health, damage)
+    def __init__(self, position, speed, collidable, gravity, sprite, health, damage, enemy=False):
+        super().__init__(position, speed, collidable, sprite, health, damage, enemy)
         self.gravity = gravity
 
     def update(self, *args):

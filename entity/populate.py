@@ -1,11 +1,13 @@
 from random import choices, randint
 from util import TILE_SIZE
 from entity.enemies.moth import Moth
+from entity.enemies.spider import Spider
 from map.tile import Tile
 
 
 entity_table = {
-    1: (Moth, (3, 5))
+    1: (Moth, (3, 5)),
+    2: (Spider, (1, 2))
 }
 
 
@@ -21,6 +23,7 @@ def get_ground(tile_map):
                 ground_positions[tile.position.x] = y_pos
         else:
             ground_positions[tile.position.x] = y_pos
+
     return list(ground_positions.values())
 
 
