@@ -1,5 +1,6 @@
 from .generators.overworld import *
 from .generators.first_cave import *
+from .generators.lava_cave import *
 
 
 def generate_easy_over_world():
@@ -22,6 +23,23 @@ def generate_cave():
     for i in range(-10, 2):
         tile_map.append(Tile(i * TILE_SIZE, 0, *TileSet.STONE, repeat_y=16))
     cave, lights = generate_first_cave()
+    tile_map.extend(cave)
+    return tile_map, lights
+
+
+def generate_lava_cave():
+    tile_map = [
+        Tile(-14 * TILE_SIZE, 0, *TileSet.STONE, repeat_x=14, repeat_y=8),
+        Tile(-2 * TILE_SIZE, 8 * TILE_SIZE, *TileSet.CRACKED_STONE, repeat_x=2, repeat_y=3),
+        Tile(-14 * TILE_SIZE, 8 * TILE_SIZE, *TileSet.GLOOM_STONE, repeat_x=12, repeat_y=3),
+        Tile(-14 * TILE_SIZE, 11 * TILE_SIZE, *TileSet.STONE, repeat_x=14, repeat_y=16)
+                       ]
+    for i in range(0, 3):
+        tile_map.extend([
+            Tile(i * TILE_SIZE * 2, 0, *TileSet.STONE, repeat_x=2, repeat_y=(8 - i)),
+            Tile(i * TILE_SIZE * 2, (11 + i) * TILE_SIZE, *TileSet.STONE, repeat_x=2, repeat_y=16)
+        ])
+    cave, lights = generate_lava_cave_gaps()
     tile_map.extend(cave)
     return tile_map, lights
 

@@ -12,6 +12,7 @@ from entity.populate import populate, get_ground
 from gui.menu.pause_menu import PauseMenu
 from entity.teleporter import Teleporter
 from render.lighting import render_lights
+from audio.sound import am
 
 
 class MainState:
@@ -38,6 +39,7 @@ class MainState:
         self._paused = False
         self._gloom = False
         self.lights = []
+        am.play_music('overworld.mp3', volume=0.1, loop=True)
 
     def update(self):
         self.window.clear((50, 50, 60) if self._gloom else (119, 171, 255))
@@ -87,6 +89,7 @@ class MainState:
         if self._paused:
             self._update_paused()
         elif self.player.health == 0:
+            am.stop_music()
             self._play_death_animation()
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
@@ -140,12 +143,18 @@ class MainState:
         self.window.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
         pygame.display.update()
         if destination == 'CAVE':
+            am.stop_music()
+            am.play_music('cave.mp3', volume=0.3, loop=True)
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 7 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_cave()
             self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 40), 6, 2, 2)
             self._gloom = True
             self._teleporter = Teleporter(51 * TILE_SIZE, self.tile_map[-1].position.y, 4, 4, 'LAVA_CAVE')
-            # lava light: Light(200, 100, (255, 209, 191), 10)
+        elif destination == 'LAVA_CAVE':
+            self.player.position.x, self.player.position.y = 0, 9 * TILE_SIZE
+            self.tile_map, self.lights = generate.generate_lava_cave()
+            self.entities = self.entities[:1]
+            self._teleporter = Teleporter(88 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'ICE_CAVE')
         else:
             print(destination)
 

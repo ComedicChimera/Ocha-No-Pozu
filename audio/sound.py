@@ -23,7 +23,7 @@ class AudioManager:
         if pygame.mixer.music.get_busy():
             return
 
-        pygame.mixer.music.load('assets/sounds/' + name)
+        pygame.mixer.music.load('assets/sounds/music/' + name)
 
         pygame.mixer.music.set_volume(volume)
 
