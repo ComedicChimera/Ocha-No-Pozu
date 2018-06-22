@@ -33,7 +33,7 @@ def draw_health_bar(screen, entity, offset):
 
 def draw_tile(screen, tile, offset):
     if isinstance(tile, SpriteTile):
-        screen.blit(tile.sprite, (tile.position.x + offset[0], HEIGHT - tile.position.y - tile.dimensions.y + offset[1]))
+        screen.blit(tile.sprite(), (tile.position.x + offset[0], HEIGHT - tile.position.y - tile.dimensions.y + offset[1]))
     else:
         width, height = TILE_SIZE * tile.repeat_x, TILE_SIZE * tile.repeat_y
         tile_image = pygame.Surface((width, height), pygame.SRCALPHA)

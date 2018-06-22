@@ -2,6 +2,7 @@ from map.tile import *
 from random import randint, choice
 from util import PLAYER_SPAWN, TILE_SIZE
 import itertools
+from render.sprite import Sprite
 
 
 # generate standard over world map
@@ -54,7 +55,7 @@ def generate_cave_entrance():
             floor = base - (i - 1 if i > 3 else i)
             floor_stone = TileSet.STONE if i < 3 else TileSet.GLOOM_STONE
             tile_map.append(
-                Tile((80 + i) * TILE_SIZE, 0, *floor_stone, repeat_y=floor, collidable=i < 3))
+                Tile((80 + i) * TILE_SIZE, 0, *floor_stone, repeat_y=floor, collidable=i < 3, render_first=not i < 3))
             if i > 0:
                 cave_height = randint(5, 6)
                 tile_map.extend([

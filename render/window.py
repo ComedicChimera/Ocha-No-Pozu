@@ -33,11 +33,15 @@ class Window:
             return False
 
         objects = []
+        firsts = []
         for obj in entities + tiles:
             if check(obj.position.x, obj.position.x + self._dimensions(obj).x, self.x_range):
                 if check(obj.position.y, obj.position.y + self._dimensions(obj).y, self.y_range):
-                    objects.append(obj)
-        return objects
+                    if hasattr(obj, 'render_first') and obj.render_first:
+                        firsts.append(obj)
+                    else:
+                        objects.append(obj)
+        return firsts + objects
 
     def draw_gui_element(self, element):
         self.blit(element.get_image(), (element.position.x, element.position.y))

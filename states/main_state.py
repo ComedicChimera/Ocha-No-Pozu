@@ -11,7 +11,7 @@ from gui.hud.death_text import DeathText
 from entity.populate import populate, get_ground
 from gui.menu.pause_menu import PauseMenu
 from entity.teleporter import Teleporter
-from render.lighting import render_lights, Light
+from render.lighting import render_lights
 
 
 class MainState:
@@ -27,7 +27,7 @@ class MainState:
         }
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
-        self._teleporter = Teleporter(TILE_SIZE * 83, 0, 2, 4, 'CAVE')
+        self._teleporter = Teleporter(TILE_SIZE * 83, 0, 2, 3, 'CAVE')
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cool_down_bar = CoolDownBar()
         self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
@@ -90,7 +90,7 @@ class MainState:
             self._play_death_animation()
         elif self.player.fading:
             self.window.draw_overlay(self._fade_vignette)
-            self.window.draw_overlay((78, 0, 107), 10)
+            self.window.draw_overlay((237, 193, 255))
         elif self._teleporter.check_collision(self.player.position):
             self._teleport(self._teleporter.destination)
 
@@ -134,9 +134,15 @@ class MainState:
             self.player_alive = False
 
     def _teleport(self, destination):
+        pygame.font.init()
+        self.window.draw_overlay((0, 0, 0))
+        text = pygame.font.SysFont('arial.ttf', 50).render('Loading...', False, (255, 255, 255))
+        self.window.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
+        pygame.display.update()
         if destination == 'CAVE':
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 7 * TILE_SIZE
-            self.entities = [self.player]
-            self.tile_map = generate.generate_cave()
+            self.entities = self.entities[:1]
+            self.tile_map, self.lights = generate.generate_cave()
             self._gloom = True
-            self.lights = [Light(200, 100, (255, 209, 191), 10)]
+            # lava light: Light(200, 100, (255, 209, 191), 10)
+

@@ -21,6 +21,7 @@ def generate_cave():
     tile_map = [Tile(-10 * TILE_SIZE, HEIGHT, *TileSet.STONE, repeat_y=5, repeat_x=40)]
     for i in range(-10, 2):
         tile_map.append(Tile(i * TILE_SIZE, 0, *TileSet.STONE, repeat_y=16))
-    tile_map.extend(generate_first_cave())
-    return tile_map
+    cave, lights = generate_first_cave()
+    tile_map.extend(cave)
+    return tile_map, lights
 
