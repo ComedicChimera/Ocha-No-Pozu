@@ -13,6 +13,7 @@ from gui.menu.pause_menu import PauseMenu
 from entity.teleporter import Teleporter
 from render.lighting import render_lights
 from audio.sound import am
+from entity.projectile import Projectile
 
 
 class MainState:
@@ -37,7 +38,8 @@ class MainState:
         self.death_text = None
         self._pause_menu = None
         self._paused = False
-        self._gloom = False
+        self._gloom = True
+        self._teleport('LAVA_CAVE')
         self.lights = []
         am.play_music('overworld.mp3', volume=0.1, loop=True)
 
@@ -71,8 +73,21 @@ class MainState:
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
                         obj.set_timer('reset-damage', 20, obj.reset_damage)
-                    if colliding(self.player, obj) and self.player.swinging:
-                        obj.hurt(self.player.damage)
+                # check for damage
+                if colliding(self.player, obj) and self.player.swinging and obj.enemy:
+                    obj.hurt(self.player.damage)
+
+                # check for projectiles
+                if isinstance(obj, Projectile):
+                    for other in others:
+                        if colliding(obj, other) and obj.parent != other and other.collidable:
+                            obj.health = 0
+                            break
+
+                # check spawned children
+                if len(obj.children) > 0:
+                    self.entities.extend(obj.children)
+                    obj.children = []
 
                 self.window.draw_entity(obj)
             # assume tile
@@ -153,8 +168,10 @@ class MainState:
         elif destination == 'LAVA_CAVE':
             self.player.position.x, self.player.position.y = 0, 9 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_lava_cave()
-            self.entities = self.entities[:1]
+            self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 60), 3, 3, 3)
             self._teleporter = Teleporter(88 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'ICE_CAVE')
-        else:
-            print(destination)
+        elif destination == 'ICE_CAVE':
+            am.stop_music()
+            am.play_music('ice_cave.mp3', volume=0.3, loop=True)
+
 

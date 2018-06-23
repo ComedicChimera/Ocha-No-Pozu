@@ -2,12 +2,14 @@ from random import choices, randint
 from util import TILE_SIZE
 from entity.enemies.moth import Moth
 from entity.enemies.spider import Spider
+from entity.enemies.fire_skull import FireSkull
 from map.tile import Tile
 
 
 entity_table = {
     1: (Moth, (3, 5)),
-    2: (Spider, (2, 4 ))
+    2: (Spider, (2, 4)),
+    3: (FireSkull, (3, 3))
 }
 
 

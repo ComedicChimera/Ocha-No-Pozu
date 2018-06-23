@@ -27,6 +27,9 @@ class Entity:
         # is enemy
         self.enemy = enemy
 
+        # spawned children
+        self.children = []
+
     def update(self, *args):
         remove_keys = []
         end_events = []
