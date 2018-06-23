@@ -7,7 +7,7 @@ from map.tile import Tile
 
 entity_table = {
     1: (Moth, (3, 5)),
-    2: (Spider, (1, 2))
+    2: (Spider, (2, 4 ))
 }
 
 
@@ -19,7 +19,7 @@ def get_ground(tile_map):
         else:
             y_pos = tile.position.y + tile.dimensions.y
         if tile.position.x in ground_positions:
-            if ground_positions[tile.position.x] < y_pos:
+            if ground_positions[tile.position.x] > y_pos:
                 ground_positions[tile.position.x] = y_pos
         else:
             ground_positions[tile.position.x] = y_pos

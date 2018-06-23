@@ -39,6 +39,7 @@ class Entity:
         for key, func in zip(remove_keys, end_events):
             self.timers.pop(key)
             func()
+        self.position.x, self.position.y = int(self.position.x), int(self.position.y)
         self._handle_collide()
 
     def transform(self, **kwargs):

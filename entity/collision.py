@@ -43,7 +43,7 @@ def calculate_y_range(entity, others):
     def fn(x):
         if entity_box.left < x.left < entity_box.right or entity_box.left < x.right < entity_box.right:
             return True
-        return x.left < entity_box.left < x.right or x.left < entity_box.right < x.right
+        return x.left <= entity_box.left <= x.right or x.left <= entity_box.right <= x.right
 
     for other in _get_collidable_boxes(others, fn):
         if entity_box.bottom >= other.top > rng.min:
