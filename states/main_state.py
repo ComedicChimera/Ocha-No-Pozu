@@ -39,9 +39,9 @@ class MainState:
         self._pause_menu = None
         self._paused = False
         self._gloom = True
-        self._teleport('LAVA_CAVE')
         self.lights = []
         am.play_music('overworld.mp3', volume=0.1, loop=True)
+        self._teleport('LAVA_CAVE')
 
     def update(self):
         self.window.clear((50, 50, 60) if self._gloom else (119, 171, 255))
@@ -114,7 +114,10 @@ class MainState:
 
         self._cool_down_bar.update(self.player)
 
-        self.window.set_window_offset(-(self.player.position.x - WIDTH / 2), (self.player.position.y - PLAYER_SPAWN))
+        x_shift = 0
+        if self.player.swinging and not self.player.flip_horizontal:
+            x_shift = 25
+        self.window.set_window_offset(-(self.player.position.x - WIDTH / 2) - x_shift, (self.player.position.y - PLAYER_SPAWN))
 
         # trim dead entities
         self.entities = [x for x in self.entities if x.health > 0 or isinstance(x, Player)]
@@ -173,5 +176,8 @@ class MainState:
         elif destination == 'ICE_CAVE':
             am.stop_music()
             am.play_music('ice_cave.mp3', volume=0.3, loop=True)
-
+            self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 9 * TILE_SIZE
+            self.tile_map, self.lights = generate.generate_ice_cave()
+            self.entities = self.entities[:1]
+            self._teleporter = Teleporter(84 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'FINAL_ROOM')
 

@@ -42,7 +42,7 @@ class Entity:
         for key, func in zip(remove_keys, end_events):
             self.timers.pop(key)
             func()
-        self.position.x, self.position.y = int(self.position.x), int(self.position.y)
+        self.position.x, self.position.y = self.position.x, self.position.y
         self._handle_collide()
 
     def transform(self, **kwargs):
@@ -73,21 +73,21 @@ class Entity:
 
     def _handle_collide(self):
         # bottom collision
-        if self.position.y < self.y_range.min and self.force.y_mag <= 0:
+        if self.position.y <= self.y_range.min and self.force.y_mag <= 0:
             self.force.reset_y()
             self.position.y = self.y_range.min
 
         # top collision
-        if self.position.y + self._sprite.dimensions.y > self.y_range.max and self.force.y_mag >= 0:
+        if self.position.y + self._sprite.dimensions.y >= self.y_range.max and self.force.y_mag >= 0:
             self._compute_top_collision()
 
         # left collision
-        if self.position.x < self.x_range.min and self.force.x_mag <= 0:
+        if self.position.x <= self.x_range.min and self.force.x_mag <= 0:
             self.force.reset_x()
             self.position.x = self.x_range.min
 
         # right collision
-        if self.position.x + self._sprite.dimensions.x > self.x_range.max and self.force.x_mag >= 0:
+        if self.position.x + self._sprite.dimensions.x >= self.x_range.max and self.force.x_mag >= 0:
             self.force.reset_x()
             self.position.x = self.x_range.max - self._sprite.dimensions.x
 

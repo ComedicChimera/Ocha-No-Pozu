@@ -1,6 +1,7 @@
 from .generators.overworld import *
 from .generators.first_cave import *
 from .generators.lava_cave import *
+from .generators.ice_cave import *
 
 
 def generate_easy_over_world():
@@ -43,3 +44,19 @@ def generate_lava_cave():
     tile_map.extend(cave)
     return tile_map, lights
 
+
+def generate_ice_cave():
+    tile_map = [
+        Tile(0, 0, *TileSet.ICE_ROCK, repeat_x=90, repeat_y=3),
+        Tile(0, 17 * TILE_SIZE, *TileSet.ICE_ROCK, repeat_x=80, repeat_y=7),
+        Tile(-10 * TILE_SIZE, 0, *TileSet.ICE_ROCK, repeat_x=10, repeat_y=9),
+        Tile(-10 * TILE_SIZE, 14 * TILE_SIZE, *TileSet.ICE_ROCK, repeat_x=10, repeat_y=10)
+    ]
+    for i in range(-10, 0):
+        if randint(0, 2) == 0:
+            tile_map.append(Tile(i * TILE_SIZE, 9 * TILE_SIZE, *TileSet.ICE_STALAGMITE))
+        if randint(0, 2) == 0:
+            tile_map.append(Tile(i * TILE_SIZE, 13 * TILE_SIZE, *TileSet.ICE_STALACTITE))
+    main, lights = generate_ice_cave_main()
+    tile_map.extend(main)
+    return tile_map, lights

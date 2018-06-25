@@ -37,10 +37,14 @@ class Player(GravityEntity):
         self.animation_state = self.PlayerStates.SWINGING
         self.swinging = True
         self.set_timer('swing', 10, self._reset_swing)
+        if not self.flip_horizontal:
+            self.position.x -= 25
 
     def _reset_swing(self):
         self.animation_state = self.PlayerStates.IDLE
         self.swinging = False
+        if not self.flip_horizontal:
+            self.position.x += 25
 
     def jump(self):
         if self.force.y_mag == 0:

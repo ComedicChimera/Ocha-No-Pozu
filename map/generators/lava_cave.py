@@ -1,5 +1,5 @@
 from map.tile import *
-from util import TILE_SIZE
+from util import TILE_SIZE, HEIGHT
 from random import randint
 from render.lighting import Light
 
@@ -26,9 +26,13 @@ def generate_lava_cave_gaps():
                     height = prev_height + 1
                 tile_map.append(Tile((counter + i) * TILE_SIZE, 0, *TileSet.STONE, repeat_y=height))
                 prev_height = height
+                if randint(0, 4) == 0:
+                    tile_map.append(SpriteTile('pink_crystal.png', (counter + i) * TILE_SIZE, prev_height * TILE_SIZE,
+                                               TILE_SIZE, TILE_SIZE, frames=5, collidable=False))
+                    lights.append(Light((counter + i - 2.5) * TILE_SIZE, (HEIGHT - height * TILE_SIZE - 112), (247, 191, 255), spread=6))
+
             counter += plat_len
         gap = not gap
-
     tile_map.append(Tile(0, ceil_height * TILE_SIZE, *TileSet.STONE, repeat_x=counter, repeat_y=16))
 
     for i in range(1, counter):
