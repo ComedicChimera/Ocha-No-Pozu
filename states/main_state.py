@@ -38,10 +38,9 @@ class MainState:
         self.death_text = None
         self._pause_menu = None
         self._paused = False
-        self._gloom = True
+        self._gloom = False
         self.lights = []
         am.play_music('overworld.mp3', volume=0.1, loop=True)
-        self._teleport('LAVA_CAVE')
 
     def update(self):
         self.window.clear((50, 50, 60) if self._gloom else (119, 171, 255))

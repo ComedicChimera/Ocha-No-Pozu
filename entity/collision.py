@@ -64,5 +64,5 @@ def colliding(entity, other):
 def y_colliding(entity, other):
     box1, box2 = _create_bounding_box(entity), _create_bounding_box(other)
     if box1.left < box2.left < box1.right or box1.left < box2.right < box1.right:
-        return box1.bottom <= box2.bottom <= box1.top or box1.bottom <= box2.top <= box1.top
+        return box1.bottom <= box2.bottom < box1.top or box1.bottom <= box2.top < box1.top
     return False

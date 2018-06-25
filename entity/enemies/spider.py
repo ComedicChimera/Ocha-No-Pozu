@@ -6,7 +6,7 @@ from util import Point2D
 
 class Spider(GravityEntity):
     def __init__(self, x, y):
-        super().__init__(Point2D(x, y), 8, False, 0.3, AnimatedSprite('spider_idle.png', Point2D(32, 32), 2, speed=0.25), 50, 45, enemy=True)
+        super().__init__(Point2D(x, y), 8, False, 0.3, AnimatedSprite('spider_idle.png', Point2D(32, 32), 2, speed=0.25), 50, 20, enemy=True)
         self._midair = False
 
     def update(self, player_pos):
