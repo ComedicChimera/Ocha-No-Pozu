@@ -4,6 +4,7 @@ from entity.enemies.moth import Moth
 from entity.enemies.spider import Spider
 from entity.enemies.fire_skull import FireSkull
 from map.tile import Tile
+from entity.heart import Heart
 
 
 entity_table = {
@@ -16,6 +17,8 @@ entity_table = {
 def get_ground(tile_map):
     ground_positions = {}
     for tile in tile_map:
+        if tile.damage > 0:
+            continue
         if isinstance(tile, Tile):
             y_pos = tile.position.y + tile.repeat_y * TILE_SIZE
         else:
@@ -30,11 +33,14 @@ def get_ground(tile_map):
 
 
 def populate(ground, area, entity_count, min_diff, max_diff):
-    spawn_points = choices(range(area[0], area[1]), k=entity_count)
+    spawn_points = choices(range(area[0], area[1]), k=entity_count + 1)
     possible_entities = [v for k, v in entity_table.items() if min_diff <= k <= max_diff]
     entities = []
-    for spawn_point in spawn_points:
-        entities.append(spawn_entity(spawn_point * TILE_SIZE, possible_entities[randint(0, len(possible_entities) - 1)], ground[spawn_point]))
+    for i in range(len(spawn_points)):
+        if i == entity_count:
+            entities.append(spawn_entity(spawn_points[i] * TILE_SIZE, (lambda x, y: Heart(x, y, 50), [0, 1]), ground[spawn_points[i]]))
+        else:
+            entities.append(spawn_entity(spawn_points[i] * TILE_SIZE, possible_entities[randint(0, len(possible_entities) - 1)], ground[spawn_points[i]]))
     return entities
 
 

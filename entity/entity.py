@@ -113,6 +113,12 @@ class Entity:
         else:
             self.health = 0
 
+    def heal(self, healing):
+        if self.health + healing > self.max_health:
+            self.health = self.max_health
+        else:
+            self.health += healing
+
     # to be overloaded
     def animate(self):
         pass

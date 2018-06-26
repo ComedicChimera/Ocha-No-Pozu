@@ -83,6 +83,11 @@ class MainState:
                             obj.health = 0
                             break
 
+                if hasattr(obj, 'healing'):
+                    if colliding(self.player, obj):
+                        self.player.heal(obj.healing)
+                        obj.health -= 1
+
                 # check spawned children
                 if len(obj.children) > 0:
                     self.entities.extend(obj.children)
