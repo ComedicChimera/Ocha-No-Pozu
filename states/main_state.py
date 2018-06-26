@@ -38,12 +38,15 @@ class MainState:
         self.death_text = None
         self._pause_menu = None
         self._paused = False
-        self._gloom = False
+        self._gloom = True
+        # self.fill_color = (119, 171, 255)
+        self.fill_color = (50, 50, 60)
         self.lights = []
         am.play_music('overworld.mp3', volume=0.1, loop=True)
+        self._teleport('ICE_CAVE')
 
     def update(self):
-        self.window.clear((50, 50, 60) if self._gloom else (119, 171, 255))
+        self.window.clear(self.fill_color)
         if not self.death_text and not self._paused:
             keys = pygame.key.get_pressed()
             for key, fn in self.key_maps.items():
@@ -171,6 +174,7 @@ class MainState:
             self.tile_map, self.lights = generate.generate_cave()
             self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 40), 6, 2, 2)
             self._gloom = True
+            self.fill_color = (50, 50, 60)
             self._teleporter = Teleporter(51 * TILE_SIZE, self.tile_map[-1].position.y, 4, 4, 'LAVA_CAVE')
         elif destination == 'LAVA_CAVE':
             self.player.position.x, self.player.position.y = 0, 9 * TILE_SIZE
@@ -182,6 +186,14 @@ class MainState:
             am.play_music('ice_cave.mp3', volume=0.3, loop=True)
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 9 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_ice_cave()
-            self.entities = self.entities[:1]
+            self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 70), 4, 4, 4)
             self._teleporter = Teleporter(84 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'FINAL_ROOM')
+        elif destination == 'FINAL_ROOM':
+            am.stop_music()
+            self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 3 * TILE_SIZE
+            self.tile_map, self.lights = generate.generate_boss_room(), []
+            self.entities = self.entities[:1]
+            self._gloom = False
+            self.fill_color = (0, 0, 0)
+            # am.play_music('final_boss.mp3', volume=0.2)
 

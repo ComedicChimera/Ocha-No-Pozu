@@ -29,6 +29,10 @@ def calculate_x_range(entity, others):
         if entity_box.bottom < x.top < entity_box.top or entity_box.bottom < x.bottom < entity_box.top:
             return True
         return x.bottom < entity_box.bottom < x.top or x.bottom < entity_box.top < x.top
+
+    if not entity.collidable:
+        others = [x for x in others if not isinstance(x, Entity)]
+
     for other in _get_collidable_boxes(others, fn):
         if entity_box.left >= other.right > rng.min:
             rng.min = other.right
@@ -44,6 +48,9 @@ def calculate_y_range(entity, others):
         if entity_box.left < x.left < entity_box.right or entity_box.left < x.right < entity_box.right:
             return True
         return x.left <= entity_box.left <= x.right or x.left <= entity_box.right <= x.right
+
+    if not entity.collidable:
+        others = [x for x in others if not isinstance(x, Entity)]
 
     for other in _get_collidable_boxes(others, fn):
         if entity_box.bottom >= other.top > rng.min:

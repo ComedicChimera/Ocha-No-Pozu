@@ -60,3 +60,16 @@ def generate_ice_cave():
     main, lights = generate_ice_cave_main()
     tile_map.extend(main)
     return tile_map, lights
+
+
+def generate_boss_room():
+    tile_map = [
+        Tile(-10 * TILE_SIZE, 0, *TileSet.BRICKS, repeat_x=60, repeat_y=3),
+        Tile(-10 * TILE_SIZE, 6 * TILE_SIZE, *TileSet.BRICKS, repeat_x=35, repeat_y=15),
+        Tile(50 * TILE_SIZE, 0, *TileSet.BRICKS, repeat_x=10, repeat_y=25),
+        SpriteTile('gate.png', -1 * TILE_SIZE, 3 * TILE_SIZE, TILE_SIZE, 96)
+    ]
+    for i in range(1, 25):
+        if i % 7 == 0:
+            tile_map.append(SpriteTile('brazier.png', i * TILE_SIZE, 3 * TILE_SIZE, TILE_SIZE, 64, frames=4, render_first=True))
+    return tile_map

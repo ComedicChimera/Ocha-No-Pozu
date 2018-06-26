@@ -7,6 +7,7 @@ class Projectile(Entity):
     def __init__(self, sprite, x, y, dx, dy, speed, damage, parent, enemy=False):
         super().__init__(Point2D(x, y), speed, False, sprite, 1, damage, enemy=enemy)
         rx, ry = abs(dx), abs(dy)
+        rx, ry = 0.1 if rx == 0 else rx, 0.1 if ry == 0 else ry
         if dx < 0 and dy < 0:
             self.rotation = math.atan(ry/rx)
         elif dx < 0:

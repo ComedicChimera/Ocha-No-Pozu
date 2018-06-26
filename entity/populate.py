@@ -3,6 +3,7 @@ from util import TILE_SIZE
 from entity.enemies.moth import Moth
 from entity.enemies.spider import Spider
 from entity.enemies.fire_skull import FireSkull
+from entity.enemies.ice_demon import IceDemon
 from map.tile import Tile
 from entity.heart import Heart
 
@@ -10,7 +11,8 @@ from entity.heart import Heart
 entity_table = {
     1: (Moth, (3, 5)),
     2: (Spider, (2, 4)),
-    3: (FireSkull, (3, 3))
+    3: (FireSkull, (3, 3)),
+    4: (IceDemon, (1, 2))
 }
 
 

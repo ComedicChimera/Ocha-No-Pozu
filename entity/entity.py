@@ -50,11 +50,11 @@ class Entity:
             v *= self.speed + self._speed_modifier
             if k == 'x' and self.position.x + v in self.x_range:
                 if v > 0 and not self.position.x + self._sprite.dimensions.x + v in self.x_range:
-                    return
+                    continue
                 self.position.x += v
             elif k == 'y' and self.position.y + v in self.y_range:
                 if v > 0 and not self.position.y + self._sprite.dimensions.y + v in self.y_range:
-                    return
+                    continue
                 self.position.y += v
 
     def sprite(self, value=None):

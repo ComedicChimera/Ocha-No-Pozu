@@ -9,7 +9,7 @@ tile_sheet = pygame.image.load('assets/tile_sheet.png')
 def draw_entity(screen, entity, offset):
     sprite = entity.sprite()
     if not sprite:
-        return
+        return screen
     sprite = sprite.convert_alpha()
 
     if entity.rotation != 0:

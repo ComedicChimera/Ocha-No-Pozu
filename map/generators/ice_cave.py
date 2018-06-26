@@ -35,6 +35,6 @@ def generate_ice_cave_main():
     tile_map.extend([
         Tile(86 * TILE_SIZE, 0, *TileSet.ICE_ROCK, repeat_x=8, repeat_y=5 + prev_height),
         Tile(86 * TILE_SIZE, (8 + prev_height) * TILE_SIZE, *TileSet.ICE_ROCK, repeat_x=8, repeat_y=18),
-        Tile(85 * TILE_SIZE, (5 + prev_height) * TILE_SIZE, *TileSet.STONE, repeat_x=8, repeat_y=3)
+        Tile(85 * TILE_SIZE, (5 + prev_height) * TILE_SIZE, *TileSet.BRICKS, repeat_x=11, repeat_y=3)
     ])
     return tile_map, lights
