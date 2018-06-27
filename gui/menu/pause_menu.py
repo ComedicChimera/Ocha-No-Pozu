@@ -9,9 +9,9 @@ class PauseMenu(Menu):
         center = (WIDTH // 2, HEIGHT // 2)
 
         super().__init__([
-            Button(center[0] - 200 // 2, center[1] - 60 // 2 - 60, Sprite('buttons/continue_selected.png', Point2D(200, 60)),
+            Button(center[0] - 100, center[1] - 60 // 2 - 60, Sprite('buttons/continue_selected.png', Point2D(200, 60)),
                    Sprite('buttons/continue_deselected.png', Point2D(200, 60)), partial(self._set_state, 1)),
-            Button(center[0] - 200 // 2, center[1] - 60 // 2 + 60, Sprite('buttons/quit_selected.png', Point2D(200, 60)),
+            Button(center[0] - 100, center[1] - 60 // 2 + 60, Sprite('buttons/quit_selected.png', Point2D(200, 60)),
                    Sprite('buttons/quit_deselected.png', Point2D(200, 60)), partial(self._set_state, 2))]
         )
         self.state = 0

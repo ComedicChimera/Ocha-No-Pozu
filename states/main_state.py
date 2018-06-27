@@ -1,6 +1,5 @@
 import pygame
 from entity.player import Player, Arrow
-from render.sprite import AnimatedSprite
 import map.generate as generate
 from entity.collision import calculate_x_range, calculate_y_range, colliding
 from render.window import Window
@@ -14,6 +13,7 @@ from entity.teleporter import Teleporter
 from render.lighting import render_lights
 from audio.sound import am
 from entity.projectile import Projectile
+from entity.bosses.final_boss import FinalBoss
 
 
 class MainState:
@@ -33,16 +33,18 @@ class MainState:
         self._teleporter = Teleporter(TILE_SIZE * 83, 0, 2, 3, 'CAVE')
         self.window = Window(screen, WIDTH, HEIGHT)
         self._cool_down_bar = CoolDownBar()
-        self.background = AnimatedSprite('background.png', Point2D(200, 96), 35, speed=0.25, reverse=True)
         self._fade_vignette = pygame.image.load('assets/sprites/vignette.png')
         self.player_alive = True
         self.death_text = None
         self._pause_menu = None
         self._paused = False
         self._gloom = False
-        self.fill_color = (119, 171, 255)
+        # self.fill_color = (119, 171, 255)
+        self.fill_color = (0, 0, 0)
         self.lights = []
+        self.boss_fight = False
         am.play_music('overworld.mp3', volume=0.1, loop=True)
+        self._teleport('BOSS_ROOM')
 
     def update(self):
         self.window.clear(self.fill_color)
@@ -60,7 +62,9 @@ class MainState:
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
 
                 if not self._paused:
-                    if obj.enemy:
+                    if isinstance(obj, FinalBoss):
+                        obj.update(self.player.position, others)
+                    elif obj.enemy:
                         obj.update(self.player.position)
                     else:
                         obj.update()
@@ -72,7 +76,7 @@ class MainState:
                 if not isinstance(obj, Player) and obj.damage > 0:
                     if isinstance(obj, Arrow):
                         for other in others:
-                            if colliding(obj, other) and isinstance(other, Entity) and other != obj.parent:
+                            if colliding(obj, other) and isinstance(other, Entity) and other.enemy:
                                 other.hurt(obj.damage)
                     elif obj.should_damage and colliding(obj, self.player):
                         self.player.hurt(obj.damage)
@@ -86,7 +90,7 @@ class MainState:
                 if isinstance(obj, Projectile):
                     for other in others:
                         if colliding(obj, other) and obj.parent != other:
-                            if other.collidable or isinstance(other, Entity):
+                            if other.collidable or (isinstance(other, Entity) and not isinstance(other, Projectile)):
                                 obj.hurt(obj.max_health)
                             break
 
@@ -125,10 +129,11 @@ class MainState:
 
         self._cool_down_bar.update(self.player)
 
-        x_shift = 0
-        if self.player.swinging and not self.player.flip_horizontal:
-            x_shift = 25
-        self.window.set_window_offset(-(self.player.position.x - WIDTH / 2) - x_shift, (self.player.position.y - PLAYER_SPAWN))
+        if not self.boss_fight:
+            x_shift = 0
+            if self.player.swinging and not self.player.flip_horizontal:
+                x_shift = 25
+            self.window.set_window_offset(-(self.player.position.x - WIDTH / 2) - x_shift, (self.player.position.y - PLAYER_SPAWN))
 
         # trim dead entities
         self.entities = [x for x in self.entities if x.health > 0 or isinstance(x, Player)]
@@ -191,13 +196,20 @@ class MainState:
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 9 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_ice_cave()
             self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 70), 4, 4, 4)
-            self._teleporter = Teleporter(84 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'FINAL_ROOM')
-        elif destination == 'FINAL_ROOM':
+            self._teleporter = Teleporter(84 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'BOSS_ROOM')
+        elif destination == 'BOSS_ROOM':
             am.stop_music()
             self.player.position.x, self.player.position.y = 2 * TILE_SIZE, 3 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_boss_room(), []
             self.entities = self.entities[:1]
             self._gloom = False
             self.fill_color = (0, 0, 0)
-            # am.play_music('final_boss.mp3', volume=0.2)
-
+            self._teleporter = Teleporter(40 * TILE_SIZE, 3 * TILE_SIZE, 4, 4, 'FINAL_BOSS_FIGHT')
+        elif destination == 'FINAL_BOSS_FIGHT':
+            am.play_music('final_boss.mp3', volume=0.2)
+            self.boss_fight = True
+            self.tile_map = generate.generate_final_boss_floor()
+            self.entities = self.entities[:1]
+            self.entities.append(FinalBoss(WIDTH // 2 - 72, HEIGHT // 2 - 54))
+            self.player.position.x, self.player.position.y = WIDTH // 2, TILE_SIZE
+            self.window.set_window_offset(0, 0)

@@ -38,4 +38,7 @@ class Projectile(Entity):
     def update(self, *args):
         self.position.x += self.dx * self.speed
         self.position.y += self.dy * self.speed
+        prev_pos = (self.position.x, self.position.y)
         super().update()
+        if (self.position.x, self.position.y) != prev_pos:
+            self.hurt(self.max_health)

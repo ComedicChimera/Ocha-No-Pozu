@@ -73,3 +73,11 @@ def generate_boss_room():
         if i % 7 == 0:
             tile_map.append(SpriteTile('brazier.png', i * TILE_SIZE, 3 * TILE_SIZE, TILE_SIZE, 64, frames=4, render_first=True))
     return tile_map
+
+
+def generate_final_boss_floor():
+    return [
+        Tile(0, 0, *TileSet.BOSS_BRICK, repeat_x=640 // TILE_SIZE),
+        Tile(640, 0, *TileSet.BOSS_BRICK, repeat_y=12),
+        Tile(0, 480, *TileSet.BOSS_BRICK, repeat_x=12)
+    ]

@@ -71,4 +71,6 @@ class TileSet:
     ICE_STALACTITE = (2, 3)
     ICE_STALAGMITE = (3, 3)
     GLOOM_STONE = (4, 3)
-    BRICKS = (2, 4)
+    COBWEB = (5, 3)
+    BRICKS = (6, 3)
+    BOSS_BRICK = (0, 4)

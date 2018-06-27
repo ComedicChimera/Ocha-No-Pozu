@@ -28,7 +28,9 @@ class FireSkull(Entity):
             self.flip_horizontal = True
         elif x > 0:
             self.flip_horizontal = False
-        self.transform(x=x, y=y)
+
+        self.position.x += x * self.speed
+        self.position.y += y * self.speed
         super().update()
 
     def fire(self, dx, dy):
