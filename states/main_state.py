@@ -1,5 +1,5 @@
 import pygame
-from entity.player import Player
+from entity.player import Player, Arrow
 from render.sprite import AnimatedSprite
 import map.generate as generate
 from entity.collision import calculate_x_range, calculate_y_range, colliding
@@ -25,7 +25,8 @@ class MainState:
             pygame.K_SPACE: self.player.jump,
             pygame.K_LSHIFT: self.fade,
             pygame.K_ESCAPE: self._invert_pause,
-            pygame.K_q: self.player.swing
+            pygame.K_q: self.player.swing,
+            pygame.K_e: self.player.shoot
         }
         self.tile_map = generate.generate_easy_over_world()
         self.entities = [self.player] + populate(get_ground(self.tile_map), (20, 80), 5, 0, 1)
@@ -38,12 +39,10 @@ class MainState:
         self.death_text = None
         self._pause_menu = None
         self._paused = False
-        self._gloom = True
-        # self.fill_color = (119, 171, 255)
-        self.fill_color = (50, 50, 60)
+        self._gloom = False
+        self.fill_color = (119, 171, 255)
         self.lights = []
         am.play_music('overworld.mp3', volume=0.1, loop=True)
-        self._teleport('ICE_CAVE')
 
     def update(self):
         self.window.clear(self.fill_color)
@@ -71,7 +70,11 @@ class MainState:
 
                 # allow entities to deal damage
                 if not isinstance(obj, Player) and obj.damage > 0:
-                    if obj.should_damage and colliding(obj, self.player):
+                    if isinstance(obj, Arrow):
+                        for other in others:
+                            if colliding(obj, other) and isinstance(other, Entity) and other != obj.parent:
+                                other.hurt(obj.damage)
+                    elif obj.should_damage and colliding(obj, self.player):
                         self.player.hurt(obj.damage)
                         obj.should_damage = False
                         obj.set_timer('reset-damage', 20, obj.reset_damage)
@@ -82,8 +85,9 @@ class MainState:
                 # check for projectiles
                 if isinstance(obj, Projectile):
                     for other in others:
-                        if colliding(obj, other) and obj.parent != other and other.collidable:
-                            obj.health = 0
+                        if colliding(obj, other) and obj.parent != other:
+                            if other.collidable or isinstance(other, Entity):
+                                obj.hurt(obj.max_health)
                             break
 
                 if hasattr(obj, 'healing'):
@@ -180,7 +184,7 @@ class MainState:
             self.player.position.x, self.player.position.y = 0, 9 * TILE_SIZE
             self.tile_map, self.lights = generate.generate_lava_cave()
             self.entities = self.entities[:1] + populate(get_ground(self.tile_map), (10, 60), 3, 3, 3)
-            self._teleporter = Teleporter(88 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'ICE_CAVE')
+            self._teleporter = Teleporter(83 * TILE_SIZE, 8 * TILE_SIZE, 4, 4, 'ICE_CAVE')
         elif destination == 'ICE_CAVE':
             am.stop_music()
             am.play_music('ice_cave.mp3', volume=0.3, loop=True)

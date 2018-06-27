@@ -3,6 +3,7 @@
     <words>
       <w>collidable</w>
       <w>collider</w>
+      <w>despawn</w>
       <w>teleport</w>
       <w>teleporter</w>
     </words>

@@ -49,7 +49,7 @@ def generate_lava_cave_gaps():
     counter += 5
     tile_map.extend([
         Tile(counter * TILE_SIZE, 0, *TileSet.STONE, repeat_x=14, repeat_y=8),
-        Tile(counter * TILE_SIZE, 8 * TILE_SIZE, *TileSet.GLOOM_STONE, repeat_x=14, repeat_y=3, collidable=False),
+        Tile(counter * TILE_SIZE, 8 * TILE_SIZE, *TileSet.GLOOM_STONE, repeat_x=14, repeat_y=3, collidable=False, render_first=True),
         Tile(counter * TILE_SIZE, 11 * TILE_SIZE, *TileSet.STONE, repeat_x=14, repeat_y=18)
     ])
 

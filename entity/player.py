@@ -4,6 +4,13 @@ from render.sprite import AnimatedSprite, Sprite
 from enum import Enum
 from audio.sound import am
 from random import randint
+from entity.projectile import Projectile
+
+
+class Arrow(Projectile):
+    def __init__(self, x, y, facing, player):
+        dx = -1 if facing else 1
+        super().__init__(Sprite('arrow.png', Point2D(19, 5)), x, y, dx, 0, 20, 15, player)
 
 
 class Player(GravityEntity):
@@ -12,6 +19,7 @@ class Player(GravityEntity):
         RUNNING = 1
         SWINGING = 2
         SWING_RUNNING = 3
+        SHOOTING = 4
 
     def __init__(self):
         super().__init__(Point2D(WIDTH / 2, PLAYER_SPAWN + 256), 10, True, 0.3, AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25),
@@ -20,6 +28,7 @@ class Player(GravityEntity):
         self.fading = False
         self.can_fade = True
         self.swinging = False
+        self.can_shoot = True
 
     def hurt(self, damage):
         if self.invulnerable:
@@ -95,6 +104,8 @@ class Player(GravityEntity):
             self._change_sprite(AnimatedSprite('player_swing.png', Point2D(50, 43), 5, speed=0.5))
         elif self.animation_state == self.PlayerStates.SWING_RUNNING:
             self._change_sprite(AnimatedSprite('player_swing_running.png', Point2D(50, 44), 5, speed=0.5))
+        elif self.animation_state == self.PlayerStates.SHOOTING:
+            self._change_sprite(AnimatedSprite('player_shoot.png', Point2D(32, 44), 5, speed=0.5))
         elif self.force.y_mag != 0:
             self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
             am.stop_sound('running_on_grass.ogg')
@@ -105,3 +116,15 @@ class Player(GravityEntity):
         else:
             self._change_sprite(AnimatedSprite('player_idle.png', Point2D(25, 44), 3, speed=0.25))
             am.stop_sound('running_on_grass.ogg')
+
+    def shoot(self):
+        if self.can_shoot:
+            self.children.append(Arrow(self.position.x + 6.5, self.position.y + 20, self.flip_horizontal, self))
+            self.can_shoot = False
+            self.set_timer('reset-shoot', 10, self._reset_shoot)
+            am.play_sound('arrow.ogg', volume=0.5)
+            self.animation_state = self.PlayerStates.SHOOTING
+
+    def _reset_shoot(self):
+        self.animation_state = self.PlayerStates.IDLE
+        self.can_shoot = True

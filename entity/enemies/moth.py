@@ -6,7 +6,7 @@ from random import randint, choice
 
 class Moth(Entity):
     def __init__(self, x, y):
-        super().__init__(Point2D(x, y), 5, False, AnimatedSprite('moth.png', Point2D(64, 64), 8), 60, 20, enemy=True)
+        super().__init__(Point2D(x, y), 5, False, AnimatedSprite('moth.png', Point2D(64, 64), 8), 60, 25, enemy=True)
         self.moving_random = 0
         self.random_direction = (0, 0)
 
