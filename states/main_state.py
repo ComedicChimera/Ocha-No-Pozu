@@ -39,12 +39,10 @@ class MainState:
         self._pause_menu = None
         self._paused = False
         self._gloom = False
-        # self.fill_color = (119, 171, 255)
-        self.fill_color = (0, 0, 0)
+        self.fill_color = (119, 171, 255)
         self.lights = []
         self.boss_fight = False
         am.play_music('overworld.mp3', volume=0.1, loop=True)
-        self._teleport('BOSS_ROOM')
 
     def update(self):
         if self._paused:
