@@ -47,6 +47,10 @@ class MainState:
         self._teleport('BOSS_ROOM')
 
     def update(self):
+        if self._paused:
+            self._update_paused()
+            return True
+
         self.window.clear(self.fill_color)
         if not self.death_text and not self._paused:
             keys = pygame.key.get_pressed()
@@ -61,13 +65,12 @@ class MainState:
                 others = self.tile_map + [x for x in self.entities if x != obj]
                 obj.x_range, obj.y_range = calculate_x_range(obj, others), calculate_y_range(obj, others)
 
-                if not self._paused:
-                    if isinstance(obj, FinalBoss):
-                        obj.update(self.player.position, others)
-                    elif obj.enemy:
-                        obj.update(self.player.position)
-                    else:
-                        obj.update()
+                if isinstance(obj, FinalBoss):
+                    obj.update(self.player.position, others)
+                elif obj.enemy:
+                    obj.update(self.player.position)
+                else:
+                    obj.update()
 
                 # add animation
                 obj.animate()
@@ -116,9 +119,7 @@ class MainState:
 
         self.window.draw_gui_element(self._cool_down_bar)
 
-        if self._paused:
-            self._update_paused()
-        elif self.player.health == 0:
+        if self.player.health == 0:
             am.stop_music()
             self._play_death_animation()
         elif self.player.fading:
@@ -206,7 +207,7 @@ class MainState:
             self.fill_color = (0, 0, 0)
             self._teleporter = Teleporter(40 * TILE_SIZE, 3 * TILE_SIZE, 4, 4, 'FINAL_BOSS_FIGHT')
         elif destination == 'FINAL_BOSS_FIGHT':
-            am.play_music('final_boss.mp3', volume=0.2)
+            am.play_music('final_boss.mp3', volume=0.2, loop=True)
             self.boss_fight = True
             self.tile_map = generate.generate_final_boss_floor()
             self.entities = self.entities[:1]

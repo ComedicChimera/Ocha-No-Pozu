@@ -65,7 +65,7 @@ def calculate_y_range(entity, others):
 
 def colliding(entity, other):
     box1, box2 = _create_bounding_box(entity), _create_bounding_box(other)
-    return box1 in box2
+    return box1 in box2 or box2 in box1
 
 
 def y_colliding(entity, other):

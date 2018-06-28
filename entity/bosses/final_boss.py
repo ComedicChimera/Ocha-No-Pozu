@@ -6,24 +6,41 @@ from entity.enemies.ice_demon import Icicle
 from entity.enemies.fire_skull import Fireball
 from random import randint
 from entity.heart import Heart
+from audio.sound import am
+
+
+class DeathField(Entity):
+    def __init__(self, x):
+        super().__init__(Point2D(x, 0), 0, False, AnimatedSprite('death_field.png', Point2D(144, 480), 7), 1, 100, False)
+        self.time_alive = 0
+
+    def update(self, *args):
+        if self.time_alive < 50:
+            self.time_alive += 1
+        else:
+            self.health = 0
 
 
 class FinalBoss(Entity):
     def __init__(self, x, y):
-        super().__init__(Point2D(x, y), 0, False, AnimatedSprite('final_boss.png', Point2D(144, 108), 32, speed=0.25), 500, 0, True)
+        super().__init__(Point2D(x, y), 0, False, AnimatedSprite('final_boss.png', Point2D(144, 108), 32, speed=0.25), 400, 0, True)
         self.y_offset = 0
         self.start_y = y
         self.downward = False
-        self.spawned_moths = 0
-        self.phase = 0
+        self._spawned_moths = 0
+        self.phase = 4
         self._spawned_fire_balls = 0
+        self._spawned_icicles = 0
+        self._teleported = 0
+        self._can_teleport = True
+        self._set_phase_5_timer = False
 
     def update(self, player_pos, entities):
         if self.phase == 0:
-            if self.spawned_moths < 2 and randint(0, 40) == 0:
+            if self._spawned_moths < 2 and randint(0, 40) == 0:
                 self.children.append(Moth(self.position.x, self.position.y))
-                self.spawned_moths += 1
-            elif self.spawned_moths > 1 and len([x for x in entities if isinstance(x, Moth)]) == 0:
+                self._spawned_moths += 1
+            elif self._spawned_moths > 1 and len([x for x in entities if isinstance(x, Moth)]) == 0:
                 self.children.extend([
                     Icicle(self.position.x, self.position.y, 0, 0, self),
                     Icicle(self.position.x + 72, self.position.y, 0, 0, self),
@@ -35,6 +52,19 @@ class FinalBoss(Entity):
         elif self.phase == 2:
             self._spawn_fire_ball()
             self.phase = 3
+        elif self.phase == 4:
+            if len([x for x in entities if isinstance(x, Heart)]) == 0 and not self._set_phase_5_timer:
+                self.set_timer('progress-5', 30, self._set_to_5)
+                self._set_phase_5_timer = True
+        elif self.phase == 5:
+            if self._teleported > 15:
+                self.phase = 6
+                self.position.x = WIDTH // 2 - 72
+            elif self._can_teleport and randint(0, 5) == 0:
+                self._teleport(player_pos)
+        elif self.phase == 6:
+            self._spawn_icicle()
+            self.phase = 7
 
         self.position.y = self.start_y + self.y_offset
 
@@ -60,3 +90,36 @@ class FinalBoss(Entity):
         else:
             self.phase = 4
             self.children.append(Heart(WIDTH // 2 - 16, TILE_SIZE * 2, 100))
+
+    def _spawn_icicle(self):
+        if self._spawned_icicles < 15:
+            self.children.append(Icicle(randint(20, 620), 300, 0, 0, self))
+            self._spawned_icicles += 1
+            self.set_timer('spawn-icicle', 50, self._spawn_icicle)
+        else:
+            self.phase = 8
+            self.children.append(Heart(WIDTH // 2 - 16, TILE_SIZE * 2, 100))
+
+    def _teleport(self, player_pos):
+        am.play_sound('death_field.ogg', volume=0.2)
+        self._can_teleport = False
+        self.children.append(DeathField(self.position.x))
+        self._teleported += 1
+        self.set_timer('set-respawn', 50, lambda: self._move(player_pos))
+
+    def _move(self, player_pos):
+        if player_pos.x - 72 < 1:
+            self.position.x = 1
+        elif player_pos.x - 72 > 572:
+            self.position.x = 572
+        else:
+            self.position.x = player_pos.x - 72
+        self._change_sprite(AnimatedSprite('final_boss_teleport.png', Point2D(144, 108), 7, speed=0.5))
+        self.set_timer('reset', 14, self._reset)
+
+    def _reset(self):
+        self._change_sprite(AnimatedSprite('final_boss.png', Point2D(144, 108), 32, speed=0.25))
+        self._can_teleport = True
+
+    def _set_to_5(self):
+        self.phase = 5
