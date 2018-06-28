@@ -28,14 +28,16 @@ class FinalBoss(Entity):
         self.start_y = y
         self.downward = False
         self._spawned_moths = 0
-        self.phase = 4
+        self.phase = 2
         self._spawned_fire_balls = 0
         self._spawned_icicles = 0
         self._teleported = 0
         self._can_teleport = True
         self._set_phase_5_timer = False
+        self._can_shoot = True
 
     def update(self, player_pos, entities):
+        super().update()
         if self.phase == 0:
             if self._spawned_moths < 2 and randint(0, 40) == 0:
                 self.children.append(Moth(self.position.x, self.position.y))
@@ -54,21 +56,41 @@ class FinalBoss(Entity):
             self.phase = 3
         elif self.phase == 4:
             if len([x for x in entities if isinstance(x, Heart)]) == 0 and not self._set_phase_5_timer:
+                print('progressing for some reason')
                 self.set_timer('progress-5', 30, self._set_to_5)
                 self._set_phase_5_timer = True
         elif self.phase == 5:
-            if self._teleported > 15:
-                self.phase = 6
-                self.position.x = WIDTH // 2 - 72
-            elif self._can_teleport and randint(0, 5) == 0:
+            if self._can_teleport and randint(0, 5) == 0:
                 self._teleport(player_pos)
         elif self.phase == 6:
             self._spawn_icicle()
             self.phase = 7
+        elif self.phase == 8:
+            if len([x for x in entities if isinstance(x, Heart)]) == 0:
+                self.phase = 9
+        elif self.phase == 9:
+            if self.position.y > TILE_SIZE * 2:
+                self.position.y -= 1
+            else:
+                self.phase = 10
+            return
+        elif self.phase == 10:
+            if self.health < 50:
+                self.invulnerable = True
+                self.phase = 11
+            elif self._can_shoot:
+                self._shoot_fireball(player_pos)
+            return
+        elif self.phase == 11:
+            self._change_sprite(AnimatedSprite('final_boss_death.png', Point2D(144, 108), 8, speed=0.25))
+            self.set_timer('death-timer', 24, self._die)
+            self.phase = 12
+            return
+        else:
+            return
 
         self.position.y = self.start_y + self.y_offset
 
-        super().update()
         if abs(self.y_offset) > 16:
             self.downward = not self.downward
         if self.downward:
@@ -77,7 +99,7 @@ class FinalBoss(Entity):
             self.y_offset += 0.25
 
     def _spawn_fire_ball(self):
-        if self._spawned_fire_balls < 20:
+        if self._spawned_fire_balls < 3:
             if randint(0, 1) == 0:
                 f_ball = Fireball(1, TILE_SIZE + 1, 1, 0, self)
             else:
@@ -108,7 +130,9 @@ class FinalBoss(Entity):
         self.set_timer('set-respawn', 50, lambda: self._move(player_pos))
 
     def _move(self, player_pos):
-        if player_pos.x - 72 < 1:
+        if self._teleported > 15:
+            self.position.x = WIDTH // 2 - 72
+        elif player_pos.x - 72 < 1:
             self.position.x = 1
         elif player_pos.x - 72 > 572:
             self.position.x = 572
@@ -119,7 +143,26 @@ class FinalBoss(Entity):
 
     def _reset(self):
         self._change_sprite(AnimatedSprite('final_boss.png', Point2D(144, 108), 32, speed=0.25))
-        self._can_teleport = True
+        if self._teleported > 15:
+            self.phase = 6
+        else:
+            self._can_teleport = True
 
     def _set_to_5(self):
         self.phase = 5
+
+    def _shoot_fireball(self, player_pos):
+        dx = -1 if player_pos.x < self.position.x else 1
+        f_ball = Fireball(self.position.x + 72, TILE_SIZE + 10, dx, 0, self)
+        f_ball.speed = 10
+        f_ball.enemy = False
+        self.children.append(f_ball)
+        self._can_shoot = False
+        self.set_timer('shoot_again', 50, self._reset_shoot)
+
+    def _reset_shoot(self):
+        self._can_shoot = True
+
+    def _die(self):
+        self.health = 0
+

@@ -7,7 +7,7 @@ from entity.projectile import Projectile
 
 class Fireball(Projectile):
     def __init__(self, x, y, dx, dy, parent):
-        super().__init__(AnimatedSprite('fire_ball.png', Point2D(32, 32), 3), x, y, dx, dy, 5, 50, parent, enemy=True)
+        super().__init__(AnimatedSprite('fire_ball.png', Point2D(25, 23), 3), x, y, dx, dy, 5, 50, parent, enemy=True)
 
 
 class FireSkull(Entity):

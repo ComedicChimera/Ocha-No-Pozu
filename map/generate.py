@@ -79,5 +79,5 @@ def generate_final_boss_floor():
     return [
         Tile(0, 0, *TileSet.BOSS_BRICK, repeat_x=640 // TILE_SIZE),
         Tile(640, 0, *TileSet.BOSS_BRICK, repeat_y=12),
-        Tile(0, 480, *TileSet.BOSS_BRICK, repeat_x=12)
+        Tile(0, 480, *TileSet.BOSS_BRICK, repeat_x=20)
     ]

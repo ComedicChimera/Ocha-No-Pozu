@@ -20,9 +20,9 @@ class Projectile(Entity):
         elif dx < 0:
             self.rotation = math.tau - math.atan(ry / rx)
         elif dy < 0:
-            self.rotation = math.pi + math.atan(ry / rx)
+            self.rotation = math.pi - math.atan(ry / rx)
         else:
-            self.rotation = math.pi / 2 + math.atan(rx / ry)
+            self.rotation = math.pi + math.atan(ry / rx)
         self.rotation = math.degrees(self.rotation)
 
     def _flatten_direction(self, dx, dy):
