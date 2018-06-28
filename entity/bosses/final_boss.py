@@ -38,6 +38,9 @@ class FinalBoss(Entity):
 
     def update(self, player_pos, entities):
         super().update()
+
+        if len(self.children) != 0:
+            return
         if self.phase == 0:
             if self._spawned_moths < 2 and randint(0, 40) == 0:
                 self.children.append(Moth(self.position.x, self.position.y))
@@ -99,7 +102,7 @@ class FinalBoss(Entity):
             self.y_offset += 0.25
 
     def _spawn_fire_ball(self):
-        if self._spawned_fire_balls < 3:
+        if self._spawned_fire_balls < 15:
             if randint(0, 1) == 0:
                 f_ball = Fireball(1, TILE_SIZE + 1, 1, 0, self)
             else:
