@@ -28,7 +28,7 @@ class FinalBoss(Entity):
         self.start_y = y
         self.downward = False
         self._spawned_moths = 0
-        self.phase = 2
+        self.phase = 0
         self._spawned_fire_balls = 0
         self._spawned_icicles = 0
         self._teleported = 0

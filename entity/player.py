@@ -105,7 +105,7 @@ class Player(GravityEntity):
         elif self.animation_state == self.PlayerStates.SWING_RUNNING:
             self._change_sprite(AnimatedSprite('player_swing_running.png', Point2D(50, 44), 5, speed=0.5))
         elif self.animation_state == self.PlayerStates.SHOOTING:
-            self._change_sprite(AnimatedSprite('player_shoot.png', Point2D(32, 44), 5, speed=0.5))
+            self._change_sprite(AnimatedSprite('player_shoot.png', Point2D(25, 44), 5, speed=0.5))
         elif self.force.y_mag != 0:
             self._change_sprite(Sprite('player_midair.png', Point2D(25, 44)))
             am.stop_sound('running_on_grass.ogg')

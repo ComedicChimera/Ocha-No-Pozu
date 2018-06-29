@@ -21,3 +21,4 @@ class PauseMenu(Menu):
 
     def _set_state(self, state):
         self.state = state
+        print(self.state)

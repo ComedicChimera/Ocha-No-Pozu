@@ -26,7 +26,7 @@ class GameState:
             self._handle_state_close()
 
         if isinstance(self._state, MenuState):
-            if self._state == 1:
+            if self._state.state == 1:
                 self._state = MainState(self._screen)
 
         pygame.display.update()

@@ -9,7 +9,7 @@ class MenuState:
     def __init__(self, screen):
         self.window = Window(screen, WIDTH, HEIGHT)
         self._menu = MainMenu()
-        self._title_screen = rm.load('sprites/title_screen.png')
+        self._title_screen = pygame.transform.scale(rm.load('sprites/title_screen.png'), (640, 480))
         self.state = 0
 
     def update(self):

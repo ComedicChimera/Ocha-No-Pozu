@@ -44,6 +44,7 @@ class MainState:
         self.boss_fight = False
         self.won = False
         am.play_music('overworld.mp3', volume=0.1, loop=True)
+        self._teleport('BOSS_ROOM')
 
     def update(self):
         if self._paused:
@@ -159,9 +160,9 @@ class MainState:
         x, y = pygame.mouse.get_pos()
         self._pause_menu.update(Point2D(x, y), pygame.mouse.get_pressed()[0] == 1)
         self.window.draw_menu(self._pause_menu)
-        if self._pause_menu.state == 1:
+        if self._pause_menu.state >= 1:
             self._paused = False
-        elif self._pause_menu.state == 2:
+        if self._pause_menu.state == 2:
             self.player_alive = False
         self._pause_menu.state = 0
 
