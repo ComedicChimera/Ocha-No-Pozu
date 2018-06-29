@@ -7,7 +7,7 @@ from random import randint
 
 class Icicle(Projectile):
     def __init__(self, x, y, dx, dy, parent):
-        super().__init__(AnimatedSprite('icicle.png', Point2D(27, 7), 5), x, y, dx, dy, 10, 60, parent, enemy=True)
+        super().__init__(AnimatedSprite('icicle.png', Point2D(27, 7), 5), x, y, dx, dy, 7, 60, parent, enemy=True)
         self.set_timer('die', 1000, self._die)
         self._dead = False
 

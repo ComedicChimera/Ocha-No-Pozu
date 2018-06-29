@@ -43,8 +43,8 @@ class MainState:
         self.lights = []
         self.boss_fight = False
         self.won = False
+        am.stop_music()
         am.play_music('overworld.mp3', volume=0.1, loop=True)
-        self._teleport('BOSS_ROOM')
 
     def update(self):
         if self._paused:
@@ -179,7 +179,7 @@ class MainState:
     def _teleport(self, destination):
         pygame.font.init()
         self.window.draw_overlay((0, 0, 0))
-        text = pygame.font.SysFont('arial.ttf', 50).render('Loading...', False, (255, 255, 255))
+        text = pygame.font.SysFont('arial.ttf', 50).render('Loading...', True, (255, 255, 255))
         self.window.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
         pygame.display.update()
         if destination == 'CAVE':

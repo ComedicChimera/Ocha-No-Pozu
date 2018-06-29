@@ -7,7 +7,7 @@ class DeathText(GUIElement):
     def __init__(self):
         pygame.font.init()
         self._scale_factor = 20
-        self._text = pygame.font.Font('assets/fonts/darksouls.ttf', 80).render('You Died', False, (125, 0, 0))
+        self._text = pygame.font.Font('assets/fonts/darksouls.ttf', 80).render('You Died', True, (125, 0, 0))
         self.animation_over = False
         super().__init__((WIDTH - self._text.get_width()) // 2, (HEIGHT - self._text.get_height()) // 2, self._text.get_width() + int(self._scale_factor), self._text.get_height() +
                          int(self._scale_factor))

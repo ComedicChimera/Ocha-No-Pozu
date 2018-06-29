@@ -59,7 +59,6 @@ class FinalBoss(Entity):
             self.phase = 3
         elif self.phase == 4:
             if len([x for x in entities if isinstance(x, Heart)]) == 0 and not self._set_phase_5_timer:
-                print('progressing for some reason')
                 self.set_timer('progress-5', 30, self._set_to_5)
                 self._set_phase_5_timer = True
         elif self.phase == 5:
